@@ -6,6 +6,7 @@ int	main(int ac, char **av)
 	std::vector<std::string> file;
 	int **map;
 	int mapSize;
+	mapSize = 0;	
 
 	if (ac == 2)
 	{
