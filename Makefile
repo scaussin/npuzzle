@@ -8,7 +8,7 @@ SRC =			src/main.cpp
 
 OBJ =			$(SRC:%.cpp=%.o)
 
-FLAGS =			-Wall -Wextra -Werror
+FLAGS =			-Wall -Wextra -Werror -g
 
 all:			$(NAME)
 

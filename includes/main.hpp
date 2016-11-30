@@ -10,5 +10,11 @@
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
 int** getMap(std::vector<std::string> &file, int &mapSize);
+void errorFormat();
+bool isSolvable(int **map, int mapSize);
+int *mapSnailOnLine(int **map, int mapSize);
+bool isSolved(int *mapLine, int mapSize);
+void convertMapLineToFinalMax(int *mapLine, int mapSize);
+// int *getCase(int *mapLine, int mapSize, int find);
 
 #endif
