@@ -4,9 +4,6 @@ int	main(int ac, char **av)
 {
 	std::ifstream fileStream;
 	std::vector<std::string> file;
-	int **map;
-	int mapSize;
-	mapSize = 0;	
 
 	if (ac == 2)
 	{
@@ -21,148 +18,22 @@ int	main(int ac, char **av)
 			std::cout << "[error] open file" << std::endl;
 			return (1);
 		}
-		map = getMap(file, mapSize);
-		mapSnailOnLine(map, mapSize);
-		isSolvable(map, mapSize);
-
-		/*for (int i = 0; i < mapSize; ++i)
+		Map map = getMap(file);
+		if (!map.isSolvable())
 		{
-			for (int j = 0; j < mapSize; ++j)
-			{
-				std::cout << map[i][j] << " " <<std::endl;	
-			}
-		}*/
+			std::cout << "Map not solvable" << std::endl;
+			return (1);
+		}
+		/*mapSnailOnLine(map, mapSize);
+		isSolvable(map, mapSize);
+		genMapSolved(mapSize);
+		manhattanDistance(map, mapSize);*/
 	}
 	else if (ac == 1)
 		std::cout << "TODO random" << std::endl;
 	else
 		std::cout << "usage: ./npuzzle [file_puzzle]" << std::endl;
 	return (0);
-}
-
-bool isSolvable(int **map, int mapSize)
-{
-	int nSwap = 0;
-	int *mapLine = mapSnailOnLine(map, mapSize);
-	int indexToSort = (mapSize * mapSize) - 1;
-
-	convertMapLineToFinalMax(mapLine, mapSize);
-	printMap(mapLine, mapSize);
-	while (isSolved(mapLine, mapSize, mapSize * mapSize) == false)
-	{
-		while (mapLine[indexToSort] == indexToSort + 1)
-		{
-			indexToSort--;
-		}
-		int *tmpCase = getCase(mapLine, mapSize, indexToSort + 1);
-		*tmpCase = mapLine[indexToSort];
-		mapLine[indexToSort] = indexToSort + 1;
-		printMap(mapLine, mapSize);
-		nSwap++;
-	}
-	std::cout << nSwap << std::endl;
-	return (true);
-}
-
-int *getCase(int *mapLine, int mapSize, int find)
-{
-	for (int i = 0; i < mapSize * mapSize; i++)
-	{
-		if (mapLine[i] == find)
-			 return (&(mapLine[i]));
-	}
-	return (NULL);
-}
-
-bool isSolved(int *mapLine, int mapSize, int max)
-{
-	for (int i = 0; i < mapSize * mapSize; i++)
-	{
-		if ((i < (mapSize * mapSize) - 1 && i + 1 != mapLine[i]) || (i == (mapSize * mapSize) - 1 && mapLine[i] != max))
-		{
-			return (false);
-		}
-	}
-	return (true);
-}
-
-void printMap(int *mapLine, int mapSize)
-{
-	for (int i = 0; i < mapSize * mapSize; i++)
-	{
-		std::cout << mapLine[i] << " ";
-	}
-	std::cout << std::endl;
-}
-
-void convertMapLineToFinalMax(int *mapLine, int mapSize)
-{
-	for (int i = 0; i < mapSize * mapSize; i++)
-	{
-		if (mapLine[i] == 0)
-			mapLine[i] = mapSize * mapSize;
-	}
-}
-/*
-void convertMapLineToZeroFinal(int *mapLine, int mapSize)
-{
-	for (int i = 0; i < mapSize * mapSize; i++)
-	{
-		if (mapLine[i] == (mapSize * mapSize))
-			mapLine[i] = 0;
-	}
-}*/
-
-int *mapSnailOnLine(int **map, int mapSize)
-{
-	int margin = 0, i = 0, j = 0, k = 0;
-	int *mapLine = new int[mapSize * mapSize];
-
-	while (42)
-	{
-		while (k < mapSize - margin)
-		{
-			mapLine[i] = map[j][k];
-			i++;
-			k++;
-		}
-		if (i == mapSize * mapSize)
-			break;
-		k--;
-		j++;
-		while (j < mapSize - margin)
-		{
-			mapLine[i] = map[j][k];
-			i++;
-			j++;
-		}
-		if (i == mapSize * mapSize)
-			break;
-		j--;
-		k--;
-		while (k >= 0 + margin)
-		{
-			mapLine[i] = map[j][k];
-			i++;
-			k--;
-		}
-		if (i == mapSize * mapSize)
-			break;
-		k++;
-		j--;
-		margin++;
-		while (j >= 0 + margin)
-		{
-			mapLine[i] = map[j][k];
-			i++;
-			j--;
-		}
-		if (i == mapSize * mapSize)
-			break;
-		j++;
-		k++;
-	}
-	return (mapLine);
 }
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
@@ -183,8 +54,9 @@ void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 	}
 }
 
-int** getMap(std::vector<std::string> &file, int &mapSize)
+Map getMap(std::vector<std::string> &file)
 {
+	int mapSize;
 	int **map;
 	int *check;
 	char *token;
@@ -211,12 +83,12 @@ int** getMap(std::vector<std::string> &file, int &mapSize)
 		if (j != mapSize || token != NULL)
 			errorFormat();
 	}
-	for (int i = 0; i < mapSize ; i++)
+	for (int i = 0; i < mapSize * mapSize ; i++)
 	{
 		if (check[i] != 1)
 			errorFormat();
 	}
-	return map;
+	return (Map(map, mapSize));
 }
 
 void errorFormat()
