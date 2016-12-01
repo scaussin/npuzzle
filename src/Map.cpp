@@ -11,21 +11,29 @@ Map::~Map()
 		delete[] map[i];
 	}
 	delete[] map;
+	if (mapLine)
+		delete mapLine;
+}
+
+int Map::getManhattanDistance(Map &solved)
+{
+	(void)solved;
+	return (1);
 }
 
 bool Map::isSolvable()
 {
 	int nSwap = 0;
-	mapLine = new MapLine();
+	initMapLine();
 	int indexToSort = (nMax) - 1;
 
-	while (mapLine->isSolved() == false)
+	while (isSolved() == false)
 	{
-		while (mapLine->line[indexToSort] == indexToSort + 1)
+		while (mapLine[indexToSort] == indexToSort + 1)
 		{
 			indexToSort--;
 		}
-		int *tmpCase = mapLine->getCase(indexToSort + 1);
+		int *tmpCase = getCase(indexToSort + 1);
 		*tmpCase = mapLine[indexToSort];
 		mapLine[indexToSort] = indexToSort + 1;
 		nSwap++;
@@ -35,31 +43,31 @@ bool Map::isSolvable()
 	return (false);
 }
 
-int *Map::MapLine::getCase(int find)
+int *Map::getCase(int find)
 {
 	for (int i = 0; i < nMax; i++)
 	{
-		if (line[i] == find)
-			 return (&(line[i]));
+		if (mapLine[i] == find)
+			 return (&(mapLine[i]));
 	}
 	return (NULL);
 }
 
-bool Map::MapLine::isSolved()
+bool Map::isSolved()
 {
 	for (int i = 0; i < nMax; i++)
 	{
-		if ((i < (nMax) - 1 && i + 1 != line[i]) || (i == (nMax) - 1 && line[i] != nMax))
+		if ((i < (nMax) - 1 && i + 1 != mapLine[i]) || (i == (nMax) - 1 && mapLine[i] != nMax))
 			return (false);
 	}
 	return (true);
 }
 
-void Map::MapLine::print()
+void Map::printMapLine()
 {
 	for (int i = 0; i < nMax; i++)
 	{
-		std::cout << line[i] << " ";
+		std::cout << mapLine[i] << " ";
 	}
 	std::cout << std::endl;
 }
@@ -74,22 +82,16 @@ void Map::print()
 	}
 }
 
-Map::MapLine::~MapLine()
-{
-	if (mapLine)
-		delete line;
-}
-
-Map::MapLine::MapLine()
+void Map::initMapLine()
 {
 	int margin = 0, i = 0, j = 0, k = 0;
-	line = new int[nMax];
+	mapLine = new int[nMax];
 
 	while (42)
 	{
 		while (k < mapSize - margin)
 		{
-			line[i] = map[j][k];
+			mapLine[i] = map[j][k];
 			i++;
 			k++;
 		}
@@ -99,7 +101,7 @@ Map::MapLine::MapLine()
 		j++;
 		while (j < mapSize - margin)
 		{
-			line[i] = map[j][k];
+			mapLine[i] = map[j][k];
 			i++;
 			j++;
 		}
@@ -109,7 +111,7 @@ Map::MapLine::MapLine()
 		k--;
 		while (k >= 0 + margin)
 		{
-			line[i] = map[j][k];
+			mapLine[i] = map[j][k];
 			i++;
 			k--;
 		}
@@ -120,7 +122,7 @@ Map::MapLine::MapLine()
 		margin++;
 		while (j >= 0 + margin)
 		{
-			line[i] = map[j][k];
+			mapLine[i] = map[j][k];
 			i++;
 			j--;
 		}
@@ -131,8 +133,7 @@ Map::MapLine::MapLine()
 	}
 	for (int i = 0; i < nMax; i++)
 	{
-		if (line[i] == 0)
-			line[i] = nMax;
+		if (mapLine[i] == 0)
+			mapLine[i] = nMax;
 	}
-	return (line);
 }

@@ -1,7 +1,7 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-class MapLine;
+#include "main.hpp"
 
 class Map {
 
@@ -9,25 +9,20 @@ class Map {
 		Map(int **map, int mapSize);
 		~Map();
 
-		int **map;
-		MapLine *mapLine;
-		int mapSize;
-		int nMax;
+		void printMapLine();
 		bool isSolvable();
 		void print();
+		int getManhattanDistance(Map &solved);
 
+		int **map;
+		int *mapLine;
+		int mapSize;
+		int nMax;
+		void initMapLine();
+		
+		bool isSolved();
+		int *getCase(int find);
 	private :
-		class MapLine
-		{
-			public:
-				MapLine();
-				~MapLine();
-				int *line;
-				int *getCase(int find);
-				bool isSolved();
-				void print();
-			private:
-		};
 };
 
 #endif
