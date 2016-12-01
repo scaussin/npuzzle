@@ -2,6 +2,7 @@
 # define MAP_HPP
 
 #include "main.hpp"
+#include <cstdlib>
 
 class Map {
 
@@ -9,20 +10,21 @@ class Map {
 		Map(int **map, int mapSize);
 		~Map();
 
-		void printMapLine();
 		bool isSolvable();
 		void print();
+		void printMapLine();
+		bool isSolved();
 		int getManhattanDistance(Map &solved);
+		void getCoordCase(int &x, int &y, int find);
 
 		int **map;
 		int *mapLine;
 		int mapSize;
 		int nMax;
-		void initMapLine();
-		
-		bool isSolved();
-		int *getCase(int find);
+
 	private :
+		void initMapLine();
+		int *getCase(int find);
 };
 
 #endif

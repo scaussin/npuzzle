@@ -17,8 +17,31 @@ Map::~Map()
 
 int Map::getManhattanDistance(Map &solved)
 {
-	(void)solved;
-	return (1);
+	int ManhattanDistance = 0;
+
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int j = 0; j < mapSize; j++)
+		{
+			int x, y;
+			solved.getCoordCase(x, y, map[i][j]);
+			ManhattanDistance += abs(y - i) + abs(x - j);
+		}
+	}
+	return (ManhattanDistance);
+}
+
+void Map::getCoordCase(int &x, int &y, int find)
+{
+	for (y = 0; y < mapSize; y++)
+	{
+		for (x = 0; x < mapSize; x++)
+		{
+			if (map[y][x] == find)
+				return ;
+		}
+	}
+	return ;
 }
 
 bool Map::isSolvable()
@@ -27,6 +50,7 @@ bool Map::isSolvable()
 	initMapLine();
 	int indexToSort = (nMax) - 1;
 
+	printMapLine();
 	while (isSolved() == false)
 	{
 		while (mapLine[indexToSort] == indexToSort + 1)
@@ -37,6 +61,7 @@ bool Map::isSolvable()
 		*tmpCase = mapLine[indexToSort];
 		mapLine[indexToSort] = indexToSort + 1;
 		nSwap++;
+		printMapLine();
 	}
 	if (nSwap % 2 == (nMax) % 2)
 		return (true);

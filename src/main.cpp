@@ -24,6 +24,8 @@ int	main(int ac, char **av)
 			std::cout << "Map not solvable" << std::endl;
 			return (1);
 		}
+		Map solved = genMapSolved(map.mapSize);
+		std::cout << map.getManhattanDistance(solved) << std::endl;
 		/*mapSnailOnLine(map, mapSize);
 		isSolvable(map, mapSize);
 		genMapSolved(mapSize);
