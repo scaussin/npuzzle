@@ -4,8 +4,6 @@ int	main(int ac, char **av)
 {
 	std::ifstream fileStream;
 	std::vector<std::string> file;
-	int **map;
-	int mapSize;
 
 	if (ac == 2)
 	{
@@ -20,14 +18,16 @@ int	main(int ac, char **av)
 			std::cout << "[error] open file" << std::endl;
 			return (1);
 		}
-		map = getMap(file, mapSize);
-		for (int i = 0; i < mapSize; ++i)
+		Map map = getMap(file);
+		if (!map.isSolvable())
 		{
-			for (int j = 0; j < mapSize; ++j)
-			{
-				std::cout << map[i][j] << " " <<std::endl;	
-			}
+			std::cout << "Map not solvable" << std::endl;
+			return (1);
 		}
+		/*mapSnailOnLine(map, mapSize);
+		isSolvable(map, mapSize);
+		genMapSolved(mapSize);
+		manhattanDistance(map, mapSize);*/
 	}
 	else if (ac == 1)
 		std::cout << "TODO random" << std::endl;
@@ -52,81 +52,102 @@ void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 		std::cout << "[error] File format" << std::endl;
 		exit(1);
 	}
-	/*while (i < (int)file.size())
-	{
-		std::cout << file[i] << std::endl;
-		i++;
-	}*/
 }
 
-int** getMap(std::vector<std::string> &file, int &mapSize)
+Map getMap(std::vector<std::string> &file)
 {
+	int mapSize;
 	int **map;
+	int *check;
 	char *token;
 
 	mapSize = atoi(file.front().c_str());	
 	if ((int)file.size() - 1 != mapSize || mapSize < 3)
-	{
-		std::cout << "[error] File format" << std::endl;
-		exit(1);
-	}
+		errorFormat();
+	check = new int[mapSize * mapSize];
 	file.erase(file.begin());
 	map = new int*[mapSize];
 	for (int i = 0; i < mapSize; i++)
 	{
 		map[i] = new int[mapSize];
-		//std::string s = file[i];
-		//char *yourMother = s.c_str();
 		token = strtok(strdup(file[i].c_str()), "\t ");
 		int j = 0;
 		while (token != NULL && j < mapSize)
 		{
 			map[i][j] = atoi(token);
-
+			if (map[i][j] < mapSize * mapSize && map[i][j] >= 0)
+				check[map[i][j]] = 1;
 			token = strtok(NULL, "\t ");
 			j++;
 		}
-		if (j != mapSize)
-		{
-			std::cout << "[error] File format" << std::endl;
-			exit(1);
-		}		
+		if (j != mapSize || token != NULL)
+			errorFormat();
 	}
-	return map;
+	for (int i = 0; i < mapSize * mapSize ; i++)
+	{
+		if (check[i] != 1)
+			errorFormat();
+	}
+	return (Map(map, mapSize));
 }
 
+Map genMapSolved(int mapSize)
+{
+	int margin = 0, i = 0, j = 0, k = 0;
+	int **mapSolved = new int*[mapSize];
 
+	for (int i = 0; i < mapSize * mapSize; i++)
+		mapSolved[i] = new int[mapSize];
+	while (42)
+	{
+		while (k < mapSize - margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			k++;
+		}
+		k--;
+		if (i == mapSize * mapSize)
+			break;
+		j++;
+		while (j < mapSize - margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			j++;
+		}
+		j--;
+		if (i == mapSize * mapSize)
+			break;
+		k--;
+		while (k >= 0 + margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			k--;
+		}
+		k++;
+		if (i == mapSize * mapSize)
+			break;
+		j--;
+		margin++;
+		while (j >= 0 + margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			j--;
+		}
+		j++;
+		if (i == mapSize * mapSize)
+			break;
+		k++;
+	}
+	mapSolved[j][k] = 0;
+	return (Map(mapSolved, mapSize));
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void errorFormat()
+{
+	std::cout << "[error] File format" << std::endl;
+	exit(1);
+}

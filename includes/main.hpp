@@ -8,7 +8,13 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "Map.hpp"
+
+class Map;
+
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
-int** getMap(std::vector<std::string> &file, int &mapSize);
+Map getMap(std::vector<std::string> &file);
+Map genMapSolved(int mapSize);
+void errorFormat();
 
 #endif

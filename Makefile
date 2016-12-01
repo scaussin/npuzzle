@@ -4,7 +4,8 @@ CC =			g++ $(FLAGS) $(INCLUDES)
 
 INCLUDES =		-I./includes
 
-SRC =			src/main.cpp				
+SRC =			src/main.cpp \
+				src/Map.cpp	
 
 OBJ =			$(SRC:%.cpp=%.o)
 
