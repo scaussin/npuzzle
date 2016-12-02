@@ -14,8 +14,8 @@ class Map {
 		void print();
 		void printMapLine();
 		bool isSolved();
-		int getManhattanDistance(Map &solved);
-		void getCoordCase(int &x, int &y, int find);
+		int getManhattanDistance();
+		void getCoordCase(int &x, int &y, int **mapToFind, int find);
 
 		int **map;
 		int *mapLine;
@@ -25,6 +25,9 @@ class Map {
 	private :
 		void initMapLine();
 		int *getCase(int find);
+		void initMapSolved();
+
+		static int **mapSolved;
 };
 
 #endif

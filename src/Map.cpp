@@ -1,21 +1,31 @@
 #include "Map.hpp"
 
+int **Map::mapSolved = NULL;
+
 Map::Map(int **_map, int _mapSize) : map(_map), mapSize(_mapSize), nMax(_mapSize * _mapSize)
 {
+	if (!mapSolved)
+		initMapSolved();
 }
 
 Map::~Map()
 {
-	for (int i = 0; i < mapSize; i++)
+	if (map)
 	{
-		delete[] map[i];
+		if (*map)
+		{
+			for (int i = 0; i < mapSize; i++)
+			{
+				delete[] map[i];
+			}
+		}
+		delete[] map;
 	}
-	delete[] map;
 	if (mapLine)
 		delete mapLine;
 }
 
-int Map::getManhattanDistance(Map &solved)
+int Map::getManhattanDistance()
 {
 	int ManhattanDistance = 0;
 
@@ -24,20 +34,20 @@ int Map::getManhattanDistance(Map &solved)
 		for (int j = 0; j < mapSize; j++)
 		{
 			int x, y;
-			solved.getCoordCase(x, y, map[i][j]);
+			getCoordCase(x, y, mapSolved, map[i][j]);
 			ManhattanDistance += abs(y - i) + abs(x - j);
 		}
 	}
 	return (ManhattanDistance);
 }
 
-void Map::getCoordCase(int &x, int &y, int find)
+void Map::getCoordCase(int &x, int &y, int **mapToFind, int find)
 {
 	for (y = 0; y < mapSize; y++)
 	{
 		for (x = 0; x < mapSize; x++)
 		{
-			if (map[y][x] == find)
+			if (mapToFind[y][x] == find)
 				return ;
 		}
 	}
@@ -50,7 +60,6 @@ bool Map::isSolvable()
 	initMapLine();
 	int indexToSort = (nMax) - 1;
 
-	printMapLine();
 	while (isSolved() == false)
 	{
 		while (mapLine[indexToSort] == indexToSort + 1)
@@ -61,9 +70,14 @@ bool Map::isSolvable()
 		*tmpCase = mapLine[indexToSort];
 		mapLine[indexToSort] = indexToSort + 1;
 		nSwap++;
-		printMapLine();
+		//printMapLine();
 	}
-	if (nSwap % 2 == (nMax) % 2)
+	int x, y;
+	getCoordCase(x, y, mapSolved, 0);
+	int i, j;
+	getCoordCase(i, j, map, 0);
+	int ManhattanDistanceVide = abs(y - i) + abs(x - j);
+	if (nSwap % 2 == (ManhattanDistanceVide) % 2)
 		return (true);
 	return (false);
 }
@@ -161,4 +175,58 @@ void Map::initMapLine()
 		if (mapLine[i] == 0)
 			mapLine[i] = nMax;
 	}
+}
+
+void Map::initMapSolved()
+{
+	int margin = 0, i = 0, j = 0, k = 0;
+	mapSolved = new int*[mapSize];
+
+	for (int i = 0; i < mapSize * mapSize; i++)
+		mapSolved[i] = new int[mapSize];
+	while (42)
+	{
+		while (k < mapSize - margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			k++;
+		}
+		k--;
+		if (i == mapSize * mapSize)
+			break;
+		j++;
+		while (j < mapSize - margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			j++;
+		}
+		j--;
+		if (i == mapSize * mapSize)
+			break;
+		k--;
+		while (k >= 0 + margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			k--;
+		}
+		k++;
+		if (i == mapSize * mapSize)
+			break;
+		j--;
+		margin++;
+		while (j >= 0 + margin)
+		{
+			mapSolved[j][k] = i + 1;
+			i++;
+			j--;
+		}
+		j++;
+		if (i == mapSize * mapSize)
+			break;
+		k++;
+	}
+	mapSolved[j][k] = 0;
 }

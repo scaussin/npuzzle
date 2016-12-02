@@ -14,7 +14,6 @@ class Map;
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
 Map getMap(std::vector<std::string> &file);
-Map genMapSolved(int mapSize);
 void errorFormat();
 
 #endif
