@@ -19,6 +19,9 @@ int	main(int ac, char **av)
 			return (1);
 		}
 		Map map = getMap(file);
+		map.print();
+		std::cout << std::endl;
+		std::cout << std::endl;
 		if (!map.isSolvable())
 		{
 			std::cout << "Map not solvable" << std::endl;
@@ -48,12 +51,13 @@ void aStar(Map &start)
 			break ;
 		}
 
-		Node *neighbors = cur.map->getNeighbors();
-		for(int i = 0; &neighbors[i]; i++)
+		/*Node *neighbors =*/ cur.map->getNeighbors();
+		for(int i = 0; i < 4; i++)
 		{
-			//neighbors[i].map->print();
+			// neighbors[i].map->print();
 			std::cout << std::endl;
 		}
+			break ;
 	}
 
 	/*for (std::vector<Node>::iterator i = open.begin(); i != open.end(); ++i)*/

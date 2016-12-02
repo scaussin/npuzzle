@@ -98,7 +98,7 @@ Node *Map::getNeighbors()
 	int x, y, i = 0;
 	Node *neighbors = new Node[5];
 
-	bzero(neighbors, sizeof( ) * 5);
+	bzero(neighbors, sizeof(Node) * 5);
 	getCoordCase(x, y, map, 0);
 
 	if (y > 0)
@@ -112,6 +112,7 @@ Node *Map::getNeighbors()
 	{
 		neighbors[i] = Node(this);
 		neighbors[i].map->moveDown(x, y);
+		neighbors[i].map->print();
 		i++;
 	}
 	if (x > 0)
