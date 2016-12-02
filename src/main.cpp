@@ -24,6 +24,7 @@ int	main(int ac, char **av)
 			std::cout << "Map not solvable" << std::endl;
 			return (1);
 		}
+		aStar();
 		std::cout << map.getManhattanDistance() << std::endl;
 	}
 	else if (ac == 1)
@@ -32,6 +33,25 @@ int	main(int ac, char **av)
 		std::cout << "usage: ./npuzzle [file_puzzle]" << std::endl;
 	return (0);
 }
+
+void aStar()
+{
+	Queue open;
+
+	while (!open.empty())
+	{
+		Node cur = open.top();
+		if (cur.isSolved())
+		{
+			//reconstituer chemin
+			break ;
+		}
+		for
+	}
+
+	/*for (std::vector<Node>::iterator i = open.begin(); i != open.end(); ++i)*/
+}
+
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 {

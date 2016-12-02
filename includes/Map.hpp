@@ -1,8 +1,8 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-#include "main.hpp"
 #include <cstdlib>
+#include <iostream>
 
 class Map {
 
@@ -13,9 +13,9 @@ class Map {
 		bool isSolvable();
 		void print();
 		void printMapLine();
-		bool isSolved();
 		int getManhattanDistance();
 		void getCoordCase(int &x, int &y, int **mapToFind, int find);
+		bool isSolved();
 
 		int **map;
 		int *mapLine;
@@ -24,6 +24,7 @@ class Map {
 
 	private :
 		void initMapLine();
+		bool isMapLineSolved();
 		int *getCase(int find);
 		void initMapSolved();
 
