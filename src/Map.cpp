@@ -93,39 +93,40 @@ int *Map::getCase(int find)
 	return (NULL);
 }
 
-Node *getNeighbors()
+Node *Map::getNeighbors()
 {
 	int x, y, i = 0;
-	Node *neighbors[5];
+	Node *neighbors = new Node[5];
 
-	bzero(neighbors, sizeof(Node) * 5);
-	getCoordCase(&x, &y, map, 0);
+	bzero(neighbors, sizeof( ) * 5);
+	getCoordCase(x, y, map, 0);
 
 	if (y > 0)
 	{
-		neighbors[i] = new Node(this);
-		neighbors[i].moveUp(x, y);
+		neighbors[i] = Node(this);
+		neighbors[i].map->moveUp(x, y);
+		neighbors[i].map->print();
 		i++;
 	}
 	if (y < mapSize - 1)
 	{
-		neighbors[i] = new Node(this);
-		neighbors[i].moveDown(x, y);
+		neighbors[i] = Node(this);
+		neighbors[i].map->moveDown(x, y);
 		i++;
 	}
 	if (x > 0)
 	{
-		neighbors[i] = new Node(this);
-		neighbors[i].moveLeft(x, y);
+		neighbors[i] = Node(this);
+		neighbors[i].map->moveLeft(x, y);
 		i++;
 	}
 	if (x < mapSize - 1)
 	{
-		neighbors[i] = new Node(this);
-		neighbors[i].moveLeft(x, y);
+		neighbors[i] = Node(this);
+		neighbors[i].map->moveLeft(x, y);
 		i++;
 	}
-
+	return (neighbors);
 }
 
 void Map::moveUp(int x, int y)
@@ -159,11 +160,12 @@ void Map::moveRight(int x, int y)
 	map[y][x + 1] = map[y][x];
 	map[y][x] = tmp;
 }
+
 bool Map::isSolved()
 {
-	for (y = 0; y < mapSize; y++)
+	for (int y = 0; y < mapSize; y++)
 	{
-		for (x = 0; x < mapSize; x++)
+		for (int x = 0; x < mapSize; x++)
 		{
 			if (mapSolved[y][x] != map[y][x])
 				return false;

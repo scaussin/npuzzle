@@ -42,6 +42,6 @@ class Queue : public pq
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
 Map getMap(std::vector<std::string> &file);
 void errorFormat();
-void aStar();
+void aStar(Map &start);
 
 #endif

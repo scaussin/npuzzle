@@ -4,6 +4,10 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "Node.hpp"
+
+class Node;
+
 class Map {
 
 	public :
@@ -16,6 +20,11 @@ class Map {
 		int getManhattanDistance();
 		void getCoordCase(int &x, int &y, int **mapToFind, int find);
 		bool isSolved();
+		Node *getNeighbors();
+		void moveUp(int x, int y);
+		void moveDown(int x, int y);
+		void moveLeft(int x, int y);
+		void moveRight(int x, int y);
 
 		int **map;
 		int *mapLine;

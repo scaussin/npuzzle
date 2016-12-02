@@ -24,7 +24,7 @@ int	main(int ac, char **av)
 			std::cout << "Map not solvable" << std::endl;
 			return (1);
 		}
-		aStar();
+		aStar(map);
 		std::cout << map.getManhattanDistance() << std::endl;
 	}
 	else if (ac == 1)
@@ -34,19 +34,26 @@ int	main(int ac, char **av)
 	return (0);
 }
 
-void aStar()
+void aStar(Map &start)
 {
 	Queue open;
 
+	open.push(Node(&start));
 	while (!open.empty())
 	{
 		Node cur = open.top();
-		if (cur.isSolved())
+		if (cur.map->isSolved())
 		{
 			//reconstituer chemin
 			break ;
 		}
-		for
+
+		Node *neighbors = cur.map->getNeighbors();
+		for(int i = 0; &neighbors[i]; i++)
+		{
+			//neighbors[i].map->print();
+			std::cout << std::endl;
+		}
 	}
 
 	/*for (std::vector<Node>::iterator i = open.begin(); i != open.end(); ++i)*/
