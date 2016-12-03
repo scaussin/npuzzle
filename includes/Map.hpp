@@ -10,36 +10,33 @@ class Node;
 
 class Map {
 
-	public :
+	public:
 		Map(int **map, int mapSize);
 		Map(Map const &rhs);
 		Map &operator=(Map const &rhs);
+		bool operator==(Map const& rhs);
 		~Map();
 
-		bool isSolvable();
-		void print();
-		void printMapLine();
 		int getManhattanDistance();
 		void getCoordCase(int &x, int &y, int **mapToFind, int find);
-		bool isSolved();
-		Node *getNeighbors(int &nNeighbors);
-		void moveUp(int x, int y);
-		void moveDown(int x, int y);
-		void moveLeft(int x, int y);
-		void moveRight(int x, int y);
+		Node **getNeighbors(int &nNeighbors, Node *prevNode);
+		bool isMapLineSolved();
+		void print();
+		void initMapLine();
 
 		int **map;
 		int *mapLine;
 		int mapSize;
 		int nMax;
-
-	private :
-		void initMapLine();
-		bool isMapLineSolved();
-		int *getCase(int find);
-		void initMapSolved();
-
 		static int **mapSolved;
+		static int *mapLineSolved;
+
+	private:
+		void moveUp(int x, int y);
+		void moveDown(int x, int y);
+		void moveLeft(int x, int y);
+		void moveRight(int x, int y);
+		void initMapsSolved();
 };
 
 #endif

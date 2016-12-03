@@ -21,14 +21,15 @@ int	main(int ac, char **av)
 		Map map = getMap(file);
 		map.print();
 		std::cout << std::endl;
-		std::cout << std::endl;
-		if (!map.isSolvable())
+		if (!isSolvable(map))
 		{
 			std::cout << "Map not solvable" << std::endl;
 			return (1);
 		}
+		map.initMapLine();
+		if (!map.mapLine)
+		std::cout << "ok" << std::endl;
 		aStar(map);
-		std::cout << map.getManhattanDistance() << std::endl;
 	}
 	else if (ac == 1)
 		std::cout << "TODO random" << std::endl;
@@ -42,27 +43,53 @@ void aStar(Map &start)
 	Queue open;
 	Queue close;
 
-	open.push(Node(&start));
+	open.push(new Node(&start, NULL));
 	while (!open.empty())
 	{
-		Node cur = open.top();
-		if (cur.map->isSolved())
+		Node *cur = open.top();
+		open.pop();
+		if (cur->map->isMapLineSolved())
 		{
-			//reconstituer chemin
+			std::cout << "found ! cout: " << cur->cout << "open: "<< open.size()<< " close: "<< close.size()<< std::endl;
+
+			Node *tmp = cur;
+			while (tmp)
+			{
+				tmp->map->print();
+				tmp = tmp->parentNode;
+			}
 			break ;
 		}
 		int nNeighbors;
-		Node *neighbors = cur.map->getNeighbors(nNeighbors);
+		Node **neighbors = cur->map->getNeighbors(nNeighbors, cur);
 		for(int i = 0; i < nNeighbors ; i++)
 		{
-			if (is in clise)
-			neighbors[i].map->print();
-			std::cout << std::endl;
+			if (isExistAndBetter(&close, neighbors[i]) || isExistAndBetter(&open, neighbors[i]))
+			{}
+			else
+			{
+				/*neighbors[i]->parentNode->map->print();
+				neighbors[i]->map->print();
+				std::cout << "############################" <<std::endl;*/
+				neighbors[i]->cout = cur->cout + 1;
+				neighbors[i]->heuristic = neighbors[i]->cout + neighbors[i]->map->getManhattanDistance();
+				open.push(neighbors[i]);
+			}
+			close.push(cur);
 		}
-			break ;
 	}
+}
 
-	/*for (std::vector<Node>::iterator i = open.begin(); i != open.end(); ++i)*/
+bool isExistAndBetter(Queue *list, Node *cur)
+{
+	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
+	{
+		if (*((*i)->map) == *(cur->map) && cur->cout > (*i)->cout)
+		{
+			return (true);
+		}
+	}
+	return (false);
 }
 
 
@@ -84,7 +111,7 @@ void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 	}
 }
 
-Map getMap(std::vector<std::string> &file)
+Map getMap(std::vector<std::string> &file)/*leaks*/
 {
 	int mapSize;
 	int **map;

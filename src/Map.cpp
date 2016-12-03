@@ -1,17 +1,28 @@
 #include "Map.hpp"
 
 int **Map::mapSolved = NULL;
+int *Map::mapLineSolved = NULL;
 
 Map::Map(int **_map, int _mapSize) : map(_map), mapSize(_mapSize), nMax(_mapSize * _mapSize)
 {
 	mapLine = NULL;
 	if (!mapSolved)
-		initMapSolved();
+		initMapsSolved();
 }
 
 Map::Map(Map const &rhs)
 {
-	*this = rhs; 
+	*this = rhs;
+}
+
+bool Map::operator==(Map const& rhs)
+{
+	if (!mapLine)
+	{
+		std::cout << "mapLine is NULL in " << __FILE__ << ":" << __LINE__ << std::endl;
+		exit(1);
+	}
+	return(memcmp(mapLine, rhs.mapLine, nMax * sizeof(int)) == 0);
 }
 
 Map &Map::operator=(Map const &rhs)
@@ -27,7 +38,7 @@ Map &Map::operator=(Map const &rhs)
 		memcpy(map[i], rhs.map[i], mapSize * sizeof(int));
 	}
 	if (!mapSolved)
-		initMapSolved();
+		initMapsSolved();
 	return (*this);
 }
 
@@ -45,7 +56,7 @@ Map::~Map()
 		delete[] map;
 	}
 	if (mapLine)
-		delete mapLine;
+		delete[] mapLine;
 }
 
 int Map::getManhattanDistance()
@@ -77,73 +88,35 @@ void Map::getCoordCase(int &x, int &y, int **mapToFind, int find)
 	return ;
 }
 
-bool Map::isSolvable()
-{
-	int nSwap = 0;
-	initMapLine();
-	int indexToSort = (nMax) - 1;
-
-	while (isMapLineSolved() == false)
-	{
-		while (mapLine[indexToSort] == indexToSort + 1)
-		{
-			indexToSort--;
-		}
-		int *tmpCase = getCase(indexToSort + 1);
-		*tmpCase = mapLine[indexToSort];
-		mapLine[indexToSort] = indexToSort + 1;
-		nSwap++;
-		//printMapLine();
-	}
-	int x, y;
-	getCoordCase(x, y, mapSolved, 0);
-	int i, j;
-	getCoordCase(i, j, map, 0);
-	int ManhattanDistanceVide = abs(y - i) + abs(x - j);
-	if (nSwap % 2 == (ManhattanDistanceVide) % 2)
-		return (true);
-	return (false);
-}
-
-int *Map::getCase(int find)
-{
-	for (int i = 0; i < nMax; i++)
-	{
-		if (mapLine[i] == find)
-			 return (&(mapLine[i]));
-	}
-	return (NULL);
-}
-
-Node *Map::getNeighbors(int &nNeighbors)
+Node **Map::getNeighbors(int &nNeighbors, Node *parentNode)
 {
 	int x, y;
 	nNeighbors = 0;
-	Node *neighbors = new Node[4];
+	Node **neighbors = new Node*[4];
 
 	getCoordCase(x, y, map, 0);
 	if (y > 0)
 	{
-		neighbors[nNeighbors] = Node(new Map(*this));
-		neighbors[nNeighbors].map->moveUp(x, y);
+		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
+		neighbors[nNeighbors]->map->moveUp(x, y);
 		nNeighbors++;
 	}
 	if (y < mapSize - 1)
 	{
-		neighbors[nNeighbors] = Node(new Map(*this));
-		neighbors[nNeighbors].map->moveDown(x, y);
+		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
+		neighbors[nNeighbors]->map->moveDown(x, y);
 		nNeighbors++;
 	}
 	if (x > 0)
 	{
-		neighbors[nNeighbors] = Node(new Map(*this));
-		neighbors[nNeighbors].map->moveLeft(x, y);
+		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
+		neighbors[nNeighbors]->map->moveLeft(x, y);
 		nNeighbors++;
 	}
 	if (x < mapSize - 1)
 	{
-		neighbors[nNeighbors] = Node(new Map(*this));
-		neighbors[nNeighbors].map->moveRight(x, y);
+		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
+		neighbors[nNeighbors]->map->moveRight(x, y);
 		nNeighbors++;
 	}
 	return (neighbors);
@@ -155,6 +128,7 @@ void Map::moveUp(int x, int y)
 
 	map[y - 1][x] = map[y][x];
 	map[y][x] = tmp;
+	initMapLine();
 }
 
 void Map::moveDown(int x, int y)
@@ -163,6 +137,7 @@ void Map::moveDown(int x, int y)
 
 	map[y + 1][x] = map[y][x];
 	map[y][x] = tmp;
+	initMapLine();
 }
 
 void Map::moveLeft(int x, int y)
@@ -171,6 +146,7 @@ void Map::moveLeft(int x, int y)
 
 	map[y][x - 1] = map[y][x];
 	map[y][x] = tmp;
+	initMapLine();
 }
 
 void Map::moveRight(int x, int y)
@@ -179,38 +155,17 @@ void Map::moveRight(int x, int y)
 
 	map[y][x + 1] = map[y][x];
 	map[y][x] = tmp;
-}
-
-bool Map::isSolved()
-{
-	for (int y = 0; y < mapSize; y++)
-	{
-		for (int x = 0; x < mapSize; x++)
-		{
-			if (mapSolved[y][x] != map[y][x])
-				return false;
-		}
-	}
-	return true;
+	initMapLine();
 }
 
 bool Map::isMapLineSolved()
 {
-	for (int i = 0; i < nMax; i++)
+	if (!mapLine)
 	{
-		if ((i < (nMax) - 1 && i + 1 != mapLine[i]) || (i == (nMax) - 1 && mapLine[i] != nMax))
-			return (false);
+		std::cout << "mapLine is NULL in " << __FILE__ << ":" << __LINE__ << std::endl;
+		exit(1);
 	}
-	return (true);
-}
-
-void Map::printMapLine()
-{
-	for (int i = 0; i < nMax; i++)
-	{
-		std::cout << mapLine[i] << " ";
-	}
-	std::cout << std::endl;
+	return(memcmp(mapLine, mapLineSolved, nMax * sizeof(int)) == 0);
 }
 
 void Map::print()
@@ -221,65 +176,26 @@ void Map::print()
 			std::cout << (map[i][j] < 10 ? " " : "") << map[i][j] << " ";
 		std::cout << std::endl;
 	}
+	std::cout << std::endl;
 }
 
 void Map::initMapLine()
 {
-	int margin = 0, i = 0, j = 0, k = 0;
-	mapLine = new int[nMax];
+	if (!mapLine)
+		mapLine = new int[nMax];
 
-	while (42)
+	int i = 0;
+	for (int y = 0; y < mapSize; y++)
 	{
-		while (k < mapSize - margin)
+		for (int x = 0; x < mapSize; x++)
 		{
-			mapLine[i] = map[j][k];
+			mapLine[i] = map[y][x];
 			i++;
-			k++;
 		}
-		if (i == nMax)
-			break;
-		k--;
-		j++;
-		while (j < mapSize - margin)
-		{
-			mapLine[i] = map[j][k];
-			i++;
-			j++;
-		}
-		if (i == nMax)
-			break;
-		j--;
-		k--;
-		while (k >= 0 + margin)
-		{
-			mapLine[i] = map[j][k];
-			i++;
-			k--;
-		}
-		if (i == nMax)
-			break;
-		k++;
-		j--;
-		margin++;
-		while (j >= 0 + margin)
-		{
-			mapLine[i] = map[j][k];
-			i++;
-			j--;
-		}
-		if (i == nMax)
-			break;
-		j++;
-		k++;
-	}
-	for (int i = 0; i < nMax; i++)
-	{
-		if (mapLine[i] == 0)
-			mapLine[i] = nMax;
 	}
 }
 
-void Map::initMapSolved()
+void Map::initMapsSolved()
 {
 	int margin = 0, i = 0, j = 0, k = 0;
 	mapSolved = new int*[mapSize];
@@ -331,4 +247,15 @@ void Map::initMapSolved()
 		k++;
 	}
 	mapSolved[j][k] = 0;
+
+	mapLineSolved = new int[nMax];
+	i = 0;
+	for (int y = 0; y < mapSize; y++)
+	{
+		for (int x = 0; x < mapSize; x++)
+		{
+			mapLineSolved[i] = mapSolved[y][x];
+			i++;
+		}
+	}
 }

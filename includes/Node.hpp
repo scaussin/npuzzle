@@ -9,16 +9,17 @@ class Map;
 
 class Node {
 
-	public :
-		Node(Map *map);
+	public:
+		Node(Map *map, Node *parentNode);
 		Node();
 		~Node();
 
 		Map *map;
+		Node *parentNode;
 		int cout;
 		int heuristic;
 
-	private :
+	private:
 
 };
 

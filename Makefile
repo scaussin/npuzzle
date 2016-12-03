@@ -6,6 +6,7 @@ INCLUDES =		-I./includes
 
 SRC =			src/main.cpp \
 				src/Node.cpp \
+				src/isSolvable.cpp \
 				src/Map.cpp
 
 OBJ =			$(SRC:%.cpp=%.o)
