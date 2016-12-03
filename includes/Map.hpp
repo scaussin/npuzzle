@@ -12,6 +12,8 @@ class Map {
 
 	public :
 		Map(int **map, int mapSize);
+		Map(Map const &rhs);
+		Map &operator=(Map const &rhs);
 		~Map();
 
 		bool isSolvable();
@@ -20,7 +22,7 @@ class Map {
 		int getManhattanDistance();
 		void getCoordCase(int &x, int &y, int **mapToFind, int find);
 		bool isSolved();
-		Node *getNeighbors();
+		Node *getNeighbors(int &nNeighbors);
 		void moveUp(int x, int y);
 		void moveDown(int x, int y);
 		void moveLeft(int x, int y);

@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <queue>
+#include <pair>
 
 #include "Map.hpp"
 #include "Node.hpp"
@@ -24,7 +25,7 @@ class mycomparison
 		}
 };
 
-typedef std::priority_queue<Node, std::vector<Node>, mycomparison> pq;
+typedef std::priority_queue<pair<std::string, Node> , std::vector<pair<std::string, Node> >, mycomparison> pq;
 
 class Queue : public pq
 {

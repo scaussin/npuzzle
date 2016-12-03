@@ -9,6 +9,28 @@ Map::Map(int **_map, int _mapSize) : map(_map), mapSize(_mapSize), nMax(_mapSize
 		initMapSolved();
 }
 
+Map::Map(Map const &rhs)
+{
+	*this = rhs; 
+}
+
+Map &Map::operator=(Map const &rhs)
+{
+	mapSize = rhs.mapSize;
+	nMax = rhs.nMax;
+	mapLine = NULL;
+
+	map = new int*[mapSize];
+	for (int i = 0; i < mapSize; i++)
+	{
+		map[i] = new int[mapSize];
+		memcpy(map[i], rhs.map[i], mapSize * sizeof(int));
+	}
+	if (!mapSolved)
+		initMapSolved();
+	return (*this);
+}
+
 Map::~Map()
 {
 	if (map)
@@ -93,39 +115,36 @@ int *Map::getCase(int find)
 	return (NULL);
 }
 
-Node *Map::getNeighbors()
+Node *Map::getNeighbors(int &nNeighbors)
 {
-	int x, y, i = 0;
-	Node *neighbors = new Node[5];
+	int x, y;
+	nNeighbors = 0;
+	Node *neighbors = new Node[4];
 
-	bzero(neighbors, sizeof(Node) * 5);
 	getCoordCase(x, y, map, 0);
-
 	if (y > 0)
 	{
-		neighbors[i] = Node(this);
-		neighbors[i].map->moveUp(x, y);
-		neighbors[i].map->print();
-		i++;
+		neighbors[nNeighbors] = Node(new Map(*this));
+		neighbors[nNeighbors].map->moveUp(x, y);
+		nNeighbors++;
 	}
 	if (y < mapSize - 1)
 	{
-		neighbors[i] = Node(this);
-		neighbors[i].map->moveDown(x, y);
-		neighbors[i].map->print();
-		i++;
+		neighbors[nNeighbors] = Node(new Map(*this));
+		neighbors[nNeighbors].map->moveDown(x, y);
+		nNeighbors++;
 	}
 	if (x > 0)
 	{
-		neighbors[i] = Node(this);
-		neighbors[i].map->moveLeft(x, y);
-		i++;
+		neighbors[nNeighbors] = Node(new Map(*this));
+		neighbors[nNeighbors].map->moveLeft(x, y);
+		nNeighbors++;
 	}
 	if (x < mapSize - 1)
 	{
-		neighbors[i] = Node(this);
-		neighbors[i].map->moveLeft(x, y);
-		i++;
+		neighbors[nNeighbors] = Node(new Map(*this));
+		neighbors[nNeighbors].map->moveRight(x, y);
+		nNeighbors++;
 	}
 	return (neighbors);
 }
@@ -265,7 +284,7 @@ void Map::initMapSolved()
 	int margin = 0, i = 0, j = 0, k = 0;
 	mapSolved = new int*[mapSize];
 
-	for (int i = 0; i < mapSize * mapSize; i++)
+	for (int i = 0; i < nMax; i++)
 		mapSolved[i] = new int[mapSize];
 	while (42)
 	{
@@ -276,7 +295,7 @@ void Map::initMapSolved()
 			k++;
 		}
 		k--;
-		if (i == mapSize * mapSize)
+		if (i == nMax)
 			break;
 		j++;
 		while (j < mapSize - margin)
@@ -286,7 +305,7 @@ void Map::initMapSolved()
 			j++;
 		}
 		j--;
-		if (i == mapSize * mapSize)
+		if (i == nMax)
 			break;
 		k--;
 		while (k >= 0 + margin)
@@ -296,7 +315,7 @@ void Map::initMapSolved()
 			k--;
 		}
 		k++;
-		if (i == mapSize * mapSize)
+		if (i == nMax)
 			break;
 		j--;
 		margin++;
@@ -307,7 +326,7 @@ void Map::initMapSolved()
 			j--;
 		}
 		j++;
-		if (i == mapSize * mapSize)
+		if (i == nMax)
 			break;
 		k++;
 	}

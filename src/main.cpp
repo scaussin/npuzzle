@@ -40,6 +40,7 @@ int	main(int ac, char **av)
 void aStar(Map &start)
 {
 	Queue open;
+	Queue close;
 
 	open.push(Node(&start));
 	while (!open.empty())
@@ -50,11 +51,12 @@ void aStar(Map &start)
 			//reconstituer chemin
 			break ;
 		}
-
-		/*Node *neighbors =*/ cur.map->getNeighbors();
-		for(int i = 0; i < 4; i++)
+		int nNeighbors;
+		Node *neighbors = cur.map->getNeighbors(nNeighbors);
+		for(int i = 0; i < nNeighbors ; i++)
 		{
-			// neighbors[i].map->print();
+			if (is in clise)
+			neighbors[i].map->print();
 			std::cout << std::endl;
 		}
 			break ;
