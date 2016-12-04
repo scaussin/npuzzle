@@ -11,7 +11,7 @@ SRC =			src/main.cpp \
 
 OBJ =			$(SRC:%.cpp=%.o)
 
-FLAGS =			-Wall -Wextra -Werror -g
+FLAGS =			-Wall -Wextra -Werror -g -o3
 
 all:			$(NAME)
 

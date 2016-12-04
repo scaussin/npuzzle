@@ -20,6 +20,7 @@ bool Map::operator==(Map const& rhs)
 	if (!mapLine)
 	{
 		std::cout << "mapLine is NULL in " << __FILE__ << ":" << __LINE__ << std::endl;
+		return false;
 		exit(1);
 	}
 	return(memcmp(mapLine, rhs.mapLine, nMax * sizeof(int)) == 0);

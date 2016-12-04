@@ -1,5 +1,6 @@
 #include "main.hpp"
 
+
 int	main(int ac, char **av)
 {
 	std::ifstream fileStream;
@@ -49,21 +50,28 @@ void aStar(Map &start)
 		open.pop();
 		if (cur->map->isMapLineSolved())
 		{
-			std::cout << "found ! cout: " << cur->cout << "open: "<< open.size()<< " close: "<< close.size()<< std::endl;
-			Node *tmp = cur;
+			std::cout << "found ! cout: " << cur->cout << " open: "<< open.size()<< " close: "<< close.size()<< std::endl;
+			std::cout << "nbDoublon open: " << nbDoublon(&open) << " close: "<< nbDoublon(&close)<< std::endl;
+			/*Node *tmp = cur;
 			while (tmp)
 			{
 				tmp->map->print();
 				tmp = tmp->parentNode;
-			}
+			}*/
 			break ;
 		}
 		int nNeighbors;
 		Node **neighbors = cur->map->getNeighbors(nNeighbors, cur);
+		if(close.size() % 500 == 0)
+		{
+			//std::cout<<" nbDoublon open: " << nbDoublon(&open) << " close: "<< nbDoublon(&close)<< std::endl;
+			std::cout << open.size() << "\t" <<close.size() << std::endl;
+		}
 		for(int i = 0; i < nNeighbors ; i++)
 		{
 			neighbors[i]->cout = cur->cout + 1;
-			if (isExistAndBetter(&close, neighbors[i]) || isExistAndBetter(&open, neighbors[i]))
+			bool curExist;
+			if (isExistClose(&close, neighbors[i], cur, curExist) || isExistAndBetter(&open, neighbors[i]))
 			{
 				delete neighbors[i]->map;
 				delete neighbors[i];
@@ -75,14 +83,71 @@ void aStar(Map &start)
 				std::cout << "############################" <<std::endl;*/
 				open.push(neighbors[i]);
 			}
-			close.push(cur);
+			if (!curExist)
+				close.push(cur);
 		}
 //delete cur;
 		delete[] neighbors;
 	}
 }
 
+bool isExistClose(Queue *list, Node *neighbor, Node *cur, bool &curExist)
+{
+	curExist = false;
+	bool ret = false;
+	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
+	{
+		if (*((*i)->map) == *(neighbor->map) && (*i)->cout < neighbor->cout)
+			ret = true;
+		if (*((*i)->map) == *(cur->map))
+			curExist = true;
+	}
+	return ret;
+}
+
+int nbDoublon(Queue *list)
+{
+	int n = 0;
+
+	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
+	{
+		for (std::vector<Node*>::iterator j = i + 1; j != list->end(); ++j)
+		{
+			if (((*j)->map)->mapLine != NULL && *((*i)->map) == *((*j)->map))
+			{
+				/*printMapLine(tmp, 9);
+				printMapLine(((*j)->map)->mapLine, 9);
+				std::cout << "############################" <<std::endl;*/
+				((*j)->map)->mapLine = NULL;
+				n++;
+			}
+		}
+	}
+	return n;
+}
+bool cmpMapLine();
+
 bool isExistAndBetter(Queue *list, Node *cur)
+{
+	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
+	{
+		if (*((*i)->map) == *(cur->map))
+		{
+			if ((*i)->cout < cur->cout) // <= ?? <
+				return (true);
+			else
+			{
+				
+				//list->erase(i);
+				//list->push(cur);
+			}
+			//std::cout << "true\n";
+		}
+	}
+	return (false);
+}
+
+/*bool isExistAndBetter(Queue *list, Node *cur)
 {
 	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
 	{
@@ -93,8 +158,7 @@ bool isExistAndBetter(Queue *list, Node *cur)
 		}
 	}
 	return (false);
-}
-
+}*/
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 {

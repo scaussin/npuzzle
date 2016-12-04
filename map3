@@ -1,5 +1,8 @@
 #cout: 18 open: 9297 close: 13783
 #./npuzzle map3  4.22s user 0.01s system 99% cpu 4.263 total
+
+#cout: 18open: 172 close: 619
+#./npuzzle map3  0,01s user 0,00s system 77% cpu 0,010 total
 # This puzzle is solvable
 3
 2 6 0
