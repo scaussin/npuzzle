@@ -19,7 +19,6 @@ int	main(int ac, char **av)
 			return (1);
 		}
 		Map map = getMap(file);
-		map.print();
 		std::cout << std::endl;
 		if (!isSolvable(map))
 		{
@@ -64,15 +63,15 @@ void aStar(Map &start)
 		Node **neighbors = cur->map->getNeighbors(nNeighbors, cur);
 		for(int i = 0; i < nNeighbors ; i++)
 		{
+			
+			neighbors[i]->cout = cur->cout + 1;
 			if (isExistAndBetter(&close, neighbors[i]) || isExistAndBetter(&open, neighbors[i]))
 			{}
 			else
 			{
-				/*neighbors[i]->parentNode->map->print();
-				neighbors[i]->map->print();
-				std::cout << "############################" <<std::endl;*/
-				neighbors[i]->cout = cur->cout + 1;
 				neighbors[i]->heuristic = neighbors[i]->cout + neighbors[i]->map->getManhattanDistance();
+				/*neighbors[i]->map->print();
+				std::cout << "############################" <<std::endl;*/
 				open.push(neighbors[i]);
 			}
 			close.push(cur);
@@ -84,8 +83,9 @@ bool isExistAndBetter(Queue *list, Node *cur)
 {
 	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
 	{
-		if (*((*i)->map) == *(cur->map) && cur->cout > (*i)->cout)
+		if (*((*i)->map) == *(cur->map) && (*i)->cout < cur->cout)
 		{
+			//std::cout << "true\n";
 			return (true);
 		}
 	}
@@ -99,6 +99,7 @@ void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 
 	while (getline(fileStream, s, '\n'))
 	{
+		std::cout << s << std::endl;
 		if (s.find('#') != std::string::npos)
 			s.resize(s.find('#'));
 		if (s.size() > 0)

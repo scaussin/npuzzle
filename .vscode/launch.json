@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/npuzzle",
-            "args": ["mapRand"],
+            "args": ["map3"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "environment": [],
