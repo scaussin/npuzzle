@@ -50,7 +50,6 @@ void aStar(Map &start)
 		if (cur->map->isMapLineSolved())
 		{
 			std::cout << "found ! cout: " << cur->cout << "open: "<< open.size()<< " close: "<< close.size()<< std::endl;
-
 			Node *tmp = cur;
 			while (tmp)
 			{
@@ -63,10 +62,12 @@ void aStar(Map &start)
 		Node **neighbors = cur->map->getNeighbors(nNeighbors, cur);
 		for(int i = 0; i < nNeighbors ; i++)
 		{
-			
 			neighbors[i]->cout = cur->cout + 1;
 			if (isExistAndBetter(&close, neighbors[i]) || isExistAndBetter(&open, neighbors[i]))
-			{}
+			{
+				delete neighbors[i]->map;
+				delete neighbors[i];
+			}
 			else
 			{
 				neighbors[i]->heuristic = neighbors[i]->cout + neighbors[i]->map->getManhattanDistance();
@@ -76,6 +77,8 @@ void aStar(Map &start)
 			}
 			close.push(cur);
 		}
+//delete cur;
+		delete[] neighbors;
 	}
 }
 
