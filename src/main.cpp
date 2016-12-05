@@ -1,6 +1,5 @@
 #include "main.hpp"
 
-
 int	main(int ac, char **av)
 {
 	std::ifstream fileStream;
@@ -26,9 +25,8 @@ int	main(int ac, char **av)
 			std::cout << "Map not solvable" << std::endl;
 			return (1);
 		}
-		map.initMapLine();
-		if (!map.mapLine)
-		std::cout << "ok" << std::endl;
+		map.initMapString();
+		
 		aStar(map);
 	}
 	else if (ac == 1)
@@ -48,7 +46,7 @@ void aStar(Map &start)
 	{
 		Node *cur = open.top();
 		open.pop();
-		if (cur->map->isMapLineSolved())
+		if (cur->map->isMapStringSolved())
 		{
 			std::cout << "found ! cout: " << cur->cout << " open: "<< open.size()<< " close: "<< close.size()<< std::endl;
 			std::cout << "nbDoublon open: " << nbDoublon(&open) << " close: "<< nbDoublon(&close)<< std::endl;
@@ -97,9 +95,12 @@ bool isExistClose(Queue *list, Node *neighbor, Node *cur, bool &curExist)
 	bool ret = false;
 	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
 	{
-		if (*((*i)->map) == *(neighbor->map) && (*i)->cout < neighbor->cout)
+		//if (*((*i)->map) == *(neighbor->map) && (*i)->cout < neighbor->cout)
+		if (memcmp(((*i)->map)->mapString, (neighbor->map)->mapString, (cur->map)->nMax) == 0 &&
+		(*i)->cout < neighbor->cout)
 			ret = true;
-		if (*((*i)->map) == *(cur->map))
+		//if (*((*i)->map) == *(cur->map))
+		if (memcmp(((*i)->map)->mapString, (cur->map)->mapString, (cur->map)->nMax) == 0)
 			curExist = true;
 	}
 	return ret;
@@ -113,25 +114,26 @@ int nbDoublon(Queue *list)
 	{
 		for (std::vector<Node*>::iterator j = i + 1; j != list->end(); ++j)
 		{
-			if (((*j)->map)->mapLine != NULL && *((*i)->map) == *((*j)->map))
+			if (((*j)->map)->mapString != NULL && ((*i)->map)->mapString != NULL &&
+			memcmp(((*j)->map)->mapString, ((*i)->map)->mapString, ((*i)->map)->nMax) == 0)
 			{
 				/*printMapLine(tmp, 9);
 				printMapLine(((*j)->map)->mapLine, 9);
 				std::cout << "############################" <<std::endl;*/
-				((*j)->map)->mapLine = NULL;
+				((*j)->map)->mapString = NULL;
 				n++;
 			}
 		}
 	}
 	return n;
 }
-bool cmpMapLine();
 
 bool isExistAndBetter(Queue *list, Node *cur)
 {
 	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
 	{
-		if (*((*i)->map) == *(cur->map))
+		//if (*((*i)->map) == *(cur->map))
+		if (memcmp(((*i)->map)->mapString, (cur->map)->mapString, (cur->map)->nMax) == 0)
 		{
 			if ((*i)->cout < cur->cout) // <= ?? <
 				return (true);

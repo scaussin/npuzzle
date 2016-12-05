@@ -1,11 +1,11 @@
 #include "Map.hpp"
 
 int **Map::mapSolved = NULL;
-int *Map::mapLineSolved = NULL;
+char *Map::mapStringSolved = NULL;
 
 Map::Map(int **_map, int _mapSize) : map(_map), mapSize(_mapSize), nMax(_mapSize * _mapSize)
 {
-	mapLine = NULL;
+	mapString = NULL;
 	if (!mapSolved)
 		initMapsSolved();
 }
@@ -17,20 +17,14 @@ Map::Map(Map const &rhs)
 
 bool Map::operator==(Map const& rhs)
 {
-	if (!mapLine)
-	{
-		std::cout << "mapLine is NULL in " << __FILE__ << ":" << __LINE__ << std::endl;
-		return false;
-		exit(1);
-	}
-	return(memcmp(mapLine, rhs.mapLine, nMax * sizeof(int)) == 0);
+	return(memcmp(mapString, rhs.mapString, nMax) == 0);
 }
 
 Map &Map::operator=(Map const &rhs)
 {
 	mapSize = rhs.mapSize;
 	nMax = rhs.nMax;
-	mapLine = NULL;
+	mapString = NULL;
 
 	map = new int*[mapSize];
 	for (int i = 0; i < mapSize; i++)
@@ -50,14 +44,12 @@ Map::~Map()
 		if (*map)
 		{
 			for (int i = 0; i < mapSize; i++)
-			{
 				delete[] map[i];
-			}
 		}
 		delete[] map;
 	}
-	if (mapLine)
-		delete[] mapLine;
+	if (mapString)
+		delete mapString;
 }
 
 int Map::getManhattanDistance()
@@ -129,7 +121,7 @@ void Map::moveUp(int x, int y)
 
 	map[y - 1][x] = map[y][x];
 	map[y][x] = tmp;
-	initMapLine();
+	initMapString();
 }
 
 void Map::moveDown(int x, int y)
@@ -138,7 +130,7 @@ void Map::moveDown(int x, int y)
 
 	map[y + 1][x] = map[y][x];
 	map[y][x] = tmp;
-	initMapLine();
+	initMapString();
 }
 
 void Map::moveLeft(int x, int y)
@@ -147,7 +139,7 @@ void Map::moveLeft(int x, int y)
 
 	map[y][x - 1] = map[y][x];
 	map[y][x] = tmp;
-	initMapLine();
+	initMapString();
 }
 
 void Map::moveRight(int x, int y)
@@ -156,17 +148,30 @@ void Map::moveRight(int x, int y)
 
 	map[y][x + 1] = map[y][x];
 	map[y][x] = tmp;
-	initMapLine();
+	initMapString();
 }
 
-bool Map::isMapLineSolved()
+void Map::initMapString()
 {
-	if (!mapLine)
+	if (!mapString)
 	{
-		std::cout << "mapLine is NULL in " << __FILE__ << ":" << __LINE__ << std::endl;
-		exit(1);
+		mapString = new char[nMax + 1];
+		mapString[nMax] = 0;
 	}
-	return(memcmp(mapLine, mapLineSolved, nMax * sizeof(int)) == 0);
+	int c = 0;
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int j = 0; j < mapSize; j++)
+		{
+			mapString[c] = map[i][j] + '0';
+			c++;
+		}
+	}
+}
+
+bool Map::isMapStringSolved()
+{
+	return(memcmp(mapString, mapStringSolved, nMax) == 0);
 }
 
 void Map::print()
@@ -178,22 +183,6 @@ void Map::print()
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
-}
-
-void Map::initMapLine()
-{
-	if (!mapLine)
-		mapLine = new int[nMax];
-
-	int i = 0;
-	for (int y = 0; y < mapSize; y++)
-	{
-		for (int x = 0; x < mapSize; x++)
-		{
-			mapLine[i] = map[y][x];
-			i++;
-		}
-	}
 }
 
 void Map::initMapsSolved()
@@ -248,14 +237,14 @@ void Map::initMapsSolved()
 		k++;
 	}
 	mapSolved[j][k] = 0;
-
-	mapLineSolved = new int[nMax];
+	mapStringSolved = new char[nMax + 1];
+	mapStringSolved[nMax] = 0;
 	i = 0;
 	for (int y = 0; y < mapSize; y++)
 	{
 		for (int x = 0; x < mapSize; x++)
 		{
-			mapLineSolved[i] = mapSolved[y][x];
+			mapStringSolved[i] = mapSolved[y][x] + '0';
 			i++;
 		}
 	}

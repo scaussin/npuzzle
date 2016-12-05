@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+// #include <string>
 
 #include "Node.hpp"
 
@@ -20,16 +21,16 @@ class Map {
 		int getManhattanDistance();
 		void getCoordCase(int &x, int &y, int **mapToFind, int find);
 		Node **getNeighbors(int &nNeighbors, Node *prevNode);
-		bool isMapLineSolved();
+		bool isMapStringSolved();
 		void print();
-		void initMapLine();
+		void initMapString();
 
 		int **map;
-		int *mapLine;
+		char *mapString;
 		int mapSize;
 		int nMax;
 		static int **mapSolved;
-		static int *mapLineSolved;
+		static char *mapStringSolved;
 
 	private:
 		void moveUp(int x, int y);
