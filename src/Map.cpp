@@ -1,13 +1,13 @@
 #include "Map.hpp"
 
 int **Map::mapSolved = NULL;
-char *Map::mapStringSolved = NULL;
+int Map::nMax = 0;
+int Map::mapSize = 0;
+//char *Map::mapStringSolved = NULL;
 
-Map::Map(int **_map, int _mapSize) : map(_map), mapSize(_mapSize), nMax(_mapSize * _mapSize)
+Map::Map(int **_map) : map(_map)
 {
-	mapString = NULL;
-	if (!mapSolved)
-		initMapsSolved();
+	//mapString = NULL;
 }
 
 Map::Map(Map const &rhs)
@@ -17,23 +17,31 @@ Map::Map(Map const &rhs)
 
 bool Map::operator==(Map const& rhs)
 {
-	return(memcmp(mapString, rhs.mapString, nMax) == 0);
+	int i = 0;
+	int j;
+	while (i < mapSize)
+	{
+		j = 0;
+		while (j < mapSize)
+		{
+			if (map[i][j] != rhs.map[i][j])
+				return (false);
+			j++;
+		}
+		i++;
+	}
+	return (true);
+	//return(memcmp(mapString, rhs.mapString, nMax) == 0);
 }
 
 Map &Map::operator=(Map const &rhs)
 {
-	mapSize = rhs.mapSize;
-	nMax = rhs.nMax;
-	mapString = NULL;
-
 	map = new int*[mapSize];
 	for (int i = 0; i < mapSize; i++)
 	{
 		map[i] = new int[mapSize];
 		memcpy(map[i], rhs.map[i], mapSize * sizeof(int));
 	}
-	if (!mapSolved)
-		initMapsSolved();
 	return (*this);
 }
 
@@ -48,8 +56,8 @@ Map::~Map()
 		}
 		delete[] map;
 	}
-	if (mapString)
-		delete mapString;
+	/*if (mapString)
+		delete mapString;*/
 }
 
 int Map::getManhattanDistance()
@@ -90,6 +98,7 @@ Node **Map::getNeighbors(int &nNeighbors, Node *parentNode)
 	getCoordCase(x, y, map, 0);
 	if (y > 0)
 	{
+
 		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
 		neighbors[nNeighbors]->map->moveUp(x, y);
 		nNeighbors++;
@@ -121,7 +130,7 @@ void Map::moveUp(int x, int y)
 
 	map[y - 1][x] = map[y][x];
 	map[y][x] = tmp;
-	initMapString();
+	//initMapString();
 }
 
 void Map::moveDown(int x, int y)
@@ -130,7 +139,7 @@ void Map::moveDown(int x, int y)
 
 	map[y + 1][x] = map[y][x];
 	map[y][x] = tmp;
-	initMapString();
+	//initMapString();
 }
 
 void Map::moveLeft(int x, int y)
@@ -139,7 +148,7 @@ void Map::moveLeft(int x, int y)
 
 	map[y][x - 1] = map[y][x];
 	map[y][x] = tmp;
-	initMapString();
+	//initMapString();
 }
 
 void Map::moveRight(int x, int y)
@@ -148,30 +157,46 @@ void Map::moveRight(int x, int y)
 
 	map[y][x + 1] = map[y][x];
 	map[y][x] = tmp;
-	initMapString();
+	//initMapString();
 }
-
+/*
 void Map::initMapString()
 {
 	if (!mapString)
-	{
-		mapString = new char[nMax + 1];
-		mapString[nMax] = 0;
-	}
+		mapString = new char[nMax];
 	int c = 0;
 	for (int i = 0; i < mapSize; i++)
 	{
 		for (int j = 0; j < mapSize; j++)
 		{
-			mapString[c] = map[i][j] + '0';
+			mapString[c] = map[i][j];
 			c++;
 		}
 	}
-}
-
+}*/
+/*
 bool Map::isMapStringSolved()
 {
 	return(memcmp(mapString, mapStringSolved, nMax) == 0);
+}
+*/
+
+bool Map::isMapSolved()
+{
+	int i = 0;
+	int j;
+	while (i < mapSize)
+	{
+		j = 0;
+		while (j < mapSize)
+		{
+			if (map[i][j] != mapSolved[i][j])
+				return (false);
+			j++;
+		}
+		i++;
+	}
+	return (true);
 }
 
 void Map::print()
@@ -183,69 +208,4 @@ void Map::print()
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
-}
-
-void Map::initMapsSolved()
-{
-	int margin = 0, i = 0, j = 0, k = 0;
-	mapSolved = new int*[mapSize];
-
-	for (int i = 0; i < nMax; i++)
-		mapSolved[i] = new int[mapSize];
-	while (42)
-	{
-		while (k < mapSize - margin)
-		{
-			mapSolved[j][k] = i + 1;
-			i++;
-			k++;
-		}
-		k--;
-		if (i == nMax)
-			break;
-		j++;
-		while (j < mapSize - margin)
-		{
-			mapSolved[j][k] = i + 1;
-			i++;
-			j++;
-		}
-		j--;
-		if (i == nMax)
-			break;
-		k--;
-		while (k >= 0 + margin)
-		{
-			mapSolved[j][k] = i + 1;
-			i++;
-			k--;
-		}
-		k++;
-		if (i == nMax)
-			break;
-		j--;
-		margin++;
-		while (j >= 0 + margin)
-		{
-			mapSolved[j][k] = i + 1;
-			i++;
-			j--;
-		}
-		j++;
-		if (i == nMax)
-			break;
-		k++;
-	}
-	mapSolved[j][k] = 0;
-	mapStringSolved = new char[nMax + 1];
-	mapStringSolved[nMax] = 0;
-	i = 0;
-	for (int y = 0; y < mapSize; y++)
-	{
-		for (int x = 0; x < mapSize; x++)
-		{
-			mapStringSolved[i] = mapSolved[y][x] + '0';
-			i++;
-		}
-	}
 }

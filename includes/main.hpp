@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <queue>
+#include <map>
 
 #include "Map.hpp"
 #include "Node.hpp"
@@ -15,6 +16,7 @@
 
 class Map;
 class Node;
+
 
 class mycomparison
 {
@@ -38,10 +40,6 @@ class Queue : public pq
 		{
 			return (pq::c.end());
 		}
-		std::vector<Node *>::iterator erase(std::vector<Node *>::iterator pos)
-		{
-			return (pq::c.erase(pos));
-		}
 };
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
@@ -49,9 +47,10 @@ Map getMap(std::vector<std::string> &file);
 void errorFormat();
 void aStar(Map &start);
 Node *findNode(Queue *list, Node *find);
-bool isExistAndBetter(Queue *list, Node *cur);
 
-int nbDoublon(Queue *lst);
-bool isExistClose(Queue *list, Node *neighbor, Node *cur, bool &curExist);
+//int nbDoublon(Queue *lst);
+bool isExistAndBetter(Queue *list, Node *node);
+void initStatics(int mapSize);
+bool cmpMap(int **map1, int **map2);
 
 #endif

@@ -12,7 +12,7 @@ class Node;
 class Map {
 
 	public:
-		Map(int **map, int mapSize);
+		Map(int **map);
 		Map(Map const &rhs);
 		Map &operator=(Map const &rhs);
 		bool operator==(Map const& rhs);
@@ -21,23 +21,23 @@ class Map {
 		int getManhattanDistance();
 		void getCoordCase(int &x, int &y, int **mapToFind, int find);
 		Node **getNeighbors(int &nNeighbors, Node *prevNode);
-		bool isMapStringSolved();
+		bool isMapSolved();
 		void print();
-		void initMapString();
+		//void initMapString();
+		
 
 		int **map;
-		char *mapString;
-		int mapSize;
-		int nMax;
+		//char *mapString;
+		static int mapSize;
+		static int nMax;
 		static int **mapSolved;
-		static char *mapStringSolved;
+		//static char *mapStringSolved;
 
 	private:
 		void moveUp(int x, int y);
 		void moveDown(int x, int y);
 		void moveLeft(int x, int y);
 		void moveRight(int x, int y);
-		void initMapsSolved();
 };
 
 #endif
