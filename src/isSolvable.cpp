@@ -20,9 +20,9 @@ bool isSolvable(Map &map)
 	}
 	delete[] mapLineSnail;
 	int x, y;
-	map.getCoordCase(x, y, map.mapSolved, 0);
+	getCoordCase(x, y, map.mapSolved, 0);
 	int i, j;
-	map.getCoordCase(i, j, map.map, 0);
+	getCoordCase(i, j, map.map, 0);
 	int ManhattanDistanceVide = abs(y - i) + abs(x - j);
 	if (nSwap % 2 == (ManhattanDistanceVide) % 2)
 		return (true);

@@ -35,20 +35,22 @@ int	main(int ac, char **av)
 	return (0);
 }
 
-
 void aStar(Map &start)
 {
 	Queue open;
 	Queue close;
+	Node **neighbors = new Node*[4];
+	int nNeighbors;
+	int i;
 
-	open.push(new Node(&start, NULL));
+	open.push(new Node(&start));
 	while (!open.empty())
 	{
 		Node *cur = open.top();
 		open.pop();
 		if (cur->map->isMapSolved())
 		{
-			std::cout << "found ! cout: " << cur->cout << " open: "<< open.size()<< " close: "<< close.size()<< std::endl;
+			std::cout << "found ! cout: " << cur->cout << " open: " << open.size() << " close: " << close.size() << std::endl;
 			//std::cout << "nbDoublon open: " << nbDoublon(&open) << " close: "<< nbDoublon(&close)<< std::endl;
 			/*Node *tmp = cur;
 			while (tmp)
@@ -58,32 +60,107 @@ void aStar(Map &start)
 			}*/
 			break ;
 		}
-		int nNeighbors;
-		Node **neighbors = cur->map->getNeighbors(nNeighbors, cur);
-		/*if(close.size() % 500 == 0)
+		nNeighbors = getNeighbors(&close, &open, cur, neighbors);
+		if(close.size() % 500 == 0)
 		{
 			std::cout << open.size() << "\t" <<close.size() << std::endl;
-		}*/
-		for(int i = 0; i < nNeighbors ; i++)
-		{
-			neighbors[i]->cout = cur->cout + 1;
-			if (isExistAndBetter(&close, neighbors[i]) || isExistAndBetter(&open, neighbors[i]))
-			{
-				delete neighbors[i]->map;
-				delete neighbors[i];
-			}
-			else
-			{
-				neighbors[i]->heuristic = neighbors[i]->cout + neighbors[i]->map->getManhattanDistance();
-				open.push(neighbors[i]);
-			}
-			close.push(cur);
 		}
-		delete[] neighbors;
+		i = 0;
+		while(i < nNeighbors)
+		{
+			neighbors[i]->heuristic = neighbors[i]->cout + neighbors[i]->map->getManhattanDistance();
+			open.push(neighbors[i]);
+			i++;
+		}
+		close.push(cur);
 	}
 }
 
-inline bool cmpMap(int **map1, int **map2)
+void getCoordCase(int &x, int &y, int **mapToFind, int find)
+{
+	y = 0;
+	while (y < Map::mapSize)
+	{
+		x = 0;
+		while (x < Map::mapSize)
+		{
+			if (mapToFind[y][x] == find)
+				return ;
+			x++;
+		}
+		y++;
+	}
+	return ;
+}
+
+int getNeighbors(Queue *close, Queue *open, Node *cur, Node **neighbors)
+{
+	int x, y;
+	int nNeighbors = 0;
+
+	getCoordCase(x, y, cur->map->map, 0);
+	cur->cout += 1;
+	if (y > 0)
+	{
+		cur->map->moveUp(x, y);
+		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
+		{
+			
+		}
+		else
+		{
+			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
+			nNeighbors++;
+		}
+		cur->map->moveDown(x, y - 1);
+	}
+	if (y < Map::mapSize - 1)
+	{
+		cur->map->moveDown(x, y);
+		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
+		{
+			
+		}
+		else
+		{
+			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
+			nNeighbors++;
+		}
+		cur->map->moveUp(x, y + 1);
+	}
+	if (x > 0)
+	{
+		cur->map->moveLeft(x, y);
+		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
+		{
+			
+		}
+		else
+		{
+			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
+			nNeighbors++;
+		}
+		cur->map->moveRight(x - 1, y);
+	}
+	if (x < Map::mapSize - 1)
+	{
+		cur->map->moveRight(x, y);
+		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
+		{
+			
+		}
+		else
+		{
+			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
+			nNeighbors++;
+		}
+		cur->map->moveLeft(x + 1, y);
+	}
+	cur->cout -= 1;
+	return (nNeighbors);
+}
+
+bool cmpMap(int **map1, int **map2)
 {
 	int i = 0;
 	int j;
@@ -104,15 +181,9 @@ inline bool cmpMap(int **map1, int **map2)
 
 bool isExistAndBetter(Queue *list, Node *node)
 {
-	
-
 	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
 	{
-
-		
-		
-// if (*((*i)->map) == *(node->map) && (*i)->cout < node->cout)
-		if (cmpMap(((*i)->map)->map, (node->map)->map) && (*i)->cout < node->cout)
+		if (cmpMap(((*i)->map)->map, (node->map)->map) && (*i)->cout <= node->cout)
 			return (true);
 	}
 	return (false);

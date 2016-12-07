@@ -11,6 +11,7 @@ class Node {
 
 	public:
 		Node(Map *map, Node *parentNode);
+		Node(Map *_map);
 		Node();
 		~Node();
 

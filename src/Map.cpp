@@ -76,19 +76,8 @@ int Map::getManhattanDistance()
 	return (ManhattanDistance);
 }
 
-void Map::getCoordCase(int &x, int &y, int **mapToFind, int find)
-{
-	for (y = 0; y < mapSize; y++)
-	{
-		for (x = 0; x < mapSize; x++)
-		{
-			if (mapToFind[y][x] == find)
-				return ;
-		}
-	}
-	return ;
-}
 
+/*
 Node **Map::getNeighbors(int &nNeighbors, Node *parentNode)
 {
 	int x, y;
@@ -123,40 +112,32 @@ Node **Map::getNeighbors(int &nNeighbors, Node *parentNode)
 	}
 	return (neighbors);
 }
-
+*/
 void Map::moveUp(int x, int y)
 {
-	int tmp = map[y - 1][x];
-
-	map[y - 1][x] = map[y][x];
-	map[y][x] = tmp;
+	map[y][x] = map[y - 1][x];
+	map[y - 1][x] = 0;
 	//initMapString();
 }
 
 void Map::moveDown(int x, int y)
 {
-	int tmp = map[y + 1][x];
-
-	map[y + 1][x] = map[y][x];
-	map[y][x] = tmp;
+	map[y][x] = map[y + 1][x];
+	map[y + 1][x] = 0;
 	//initMapString();
 }
 
 void Map::moveLeft(int x, int y)
 {
-	int tmp = map[y][x - 1];
-
-	map[y][x - 1] = map[y][x];
-	map[y][x] = tmp;
+	map[y][x] = map[y][x - 1];
+	map[y][x - 1] = 0;
 	//initMapString();
 }
 
 void Map::moveRight(int x, int y)
 {
-	int tmp = map[y][x + 1];
-
-	map[y][x + 1] = map[y][x];
-	map[y][x] = tmp;
+	map[y][x] = map[y][x + 1];
+	map[y][x + 1] = 0;
 	//initMapString();
 }
 /*

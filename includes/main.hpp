@@ -17,7 +17,6 @@
 class Map;
 class Node;
 
-
 class mycomparison
 {
 	public:
@@ -52,5 +51,7 @@ Node *findNode(Queue *list, Node *find);
 bool isExistAndBetter(Queue *list, Node *node);
 void initStatics(int mapSize);
 bool cmpMap(int **map1, int **map2);
+int getNeighbors(Queue *close, Queue *open, Node *cur, Node **neighbors);
+void getCoordCase(int &x, int &y, int **mapToFind, int find);
 
 #endif

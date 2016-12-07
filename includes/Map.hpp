@@ -19,10 +19,14 @@ class Map {
 		~Map();
 
 		int getManhattanDistance();
-		void getCoordCase(int &x, int &y, int **mapToFind, int find);
-		Node **getNeighbors(int &nNeighbors, Node *prevNode);
+		//void getCoordCase(int &x, int &y, int **mapToFind, int find);
+		//Node **getNeighbors(int &nNeighbors, Node *prevNode);
 		bool isMapSolved();
 		void print();
+		void moveUp(int x, int y);
+		void moveDown(int x, int y);
+		void moveLeft(int x, int y);
+		void moveRight(int x, int y);
 		//void initMapString();
 		
 
@@ -34,10 +38,9 @@ class Map {
 		//static char *mapStringSolved;
 
 	private:
-		void moveUp(int x, int y);
-		void moveDown(int x, int y);
-		void moveLeft(int x, int y);
-		void moveRight(int x, int y);
+		
 };
+
+void getCoordCase(int &x, int &y, int **mapToFind, int find);
 
 #endif
