@@ -185,7 +185,12 @@ void Map::print()
 	for (int i = 0; i < mapSize; i++)
 	{
 		for (int j = 0; j < mapSize; j++)
-			std::cout << (map[i][j] < 10 ? " " : "") << map[i][j] << " ";
+		{
+			if (mapSize > 3) 
+				std::cout << (map[i][j] < 10 ? " " : "") << map[i][j] << " ";
+			else
+				std::cout << map[i][j] << " ";
+		}
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;

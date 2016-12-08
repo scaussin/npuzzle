@@ -7,6 +7,33 @@ int	main(int ac, char **av)
 
 	if (ac == 2)
 	{
+/*
+		int flags, opt;
+		int nsecs, tfnd;
+		nsecs = 0;
+		tfnd = 0;
+		flags = 0;
+
+		while ((opt = getopt(argc, argv, "nt:")) != -1) 
+		{
+			switch (opt) 
+			{
+				case 'n':
+					flags = 1;
+					break;
+				case 't':
+					nsecs = atoi(optarg);
+					tfnd = 1;
+					break;
+				default: 
+					fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n",
+					argv[0]);
+					exit(EXIT_FAILURE);
+			}
+		}
+
+		printf("flags=%d; tfnd=%d; optind=%d\n", flags, tfnd, optind);
+*/
 		fileStream.open(av[1]);
 		if (fileStream.is_open())
 		{
@@ -26,7 +53,7 @@ int	main(int ac, char **av)
 			return (1);
 		}
 		//mapStart.initMapString();
-		aStar(mapStart);
+		uniformCost(mapStart);
 	}
 	else if (ac == 1)
 		std::cout << "TODO random" << std::endl;
@@ -34,179 +61,6 @@ int	main(int ac, char **av)
 		std::cout << "usage: ./npuzzle [file_puzzle]" << std::endl;
 	return (0);
 }
-
-void aStar(Map &start)
-{
-	Queue open;
-	Queue close;
-	Node **neighbors = new Node*[4];
-	int nNeighbors;
-	int i;
-
-	open.push(new Node(&start));
-	while (!open.empty())
-	{
-		Node *cur = open.top();
-		open.pop();
-		if (cur->map->isMapSolved())
-		{
-			std::cout << "found ! cout: " << cur->cout << " open: " << open.size() << " close: " << close.size() << std::endl;
-			//std::cout << "nbDoublon open: " << nbDoublon(&open) << " close: "<< nbDoublon(&close)<< std::endl;
-			/*Node *tmp = cur;
-			while (tmp)
-			{
-				tmp->map->print();
-				tmp = tmp->parentNode;
-			}*/
-			break ;
-		}
-		nNeighbors = getNeighbors(&close, &open, cur, neighbors);
-		if(close.size() % 500 == 0)
-		{
-			std::cout << open.size() << "\t" <<close.size() << std::endl;
-		}
-		i = 0;
-		while(i < nNeighbors)
-		{
-			neighbors[i]->heuristic = neighbors[i]->cout + neighbors[i]->map->getManhattanDistance();
-			open.push(neighbors[i]);
-			i++;
-		}
-		close.push(cur);
-	}
-}
-
-void getCoordCase(int &x, int &y, int **mapToFind, int find)
-{
-	y = 0;
-	while (y < Map::mapSize)
-	{
-		x = 0;
-		while (x < Map::mapSize)
-		{
-			if (mapToFind[y][x] == find)
-				return ;
-			x++;
-		}
-		y++;
-	}
-	return ;
-}
-
-int getNeighbors(Queue *close, Queue *open, Node *cur, Node **neighbors)
-{
-	int x, y;
-	int nNeighbors = 0;
-
-	getCoordCase(x, y, cur->map->map, 0);
-	cur->cout += 1;
-	if (y > 0)
-	{
-		cur->map->moveUp(x, y);
-		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
-		{
-			
-		}
-		else
-		{
-			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
-			nNeighbors++;
-		}
-		cur->map->moveDown(x, y - 1);
-	}
-	if (y < Map::mapSize - 1)
-	{
-		cur->map->moveDown(x, y);
-		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
-		{
-			
-		}
-		else
-		{
-			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
-			nNeighbors++;
-		}
-		cur->map->moveUp(x, y + 1);
-	}
-	if (x > 0)
-	{
-		cur->map->moveLeft(x, y);
-		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
-		{
-			
-		}
-		else
-		{
-			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
-			nNeighbors++;
-		}
-		cur->map->moveRight(x - 1, y);
-	}
-	if (x < Map::mapSize - 1)
-	{
-		cur->map->moveRight(x, y);
-		if ((isExistAndBetter(close, cur) || isExistAndBetter(open, cur)))
-		{
-			
-		}
-		else
-		{
-			neighbors[nNeighbors] = new Node(new Map(*cur->map), cur);
-			nNeighbors++;
-		}
-		cur->map->moveLeft(x + 1, y);
-	}
-	cur->cout -= 1;
-	return (nNeighbors);
-}
-
-bool cmpMap(int **map1, int **map2)
-{
-	int i = 0;
-	int j;
-
-	while (i < Map::mapSize)
-	{
-		j = 0;
-		while (j < Map::mapSize)
-		{
-			if (map1[i][j] != map2[i][j])
-				return (false);
-			j++;
-		}
-		i++;
-	}
-	return (true);
-}
-
-bool isExistAndBetter(Queue *list, Node *node)
-{
-	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
-	{
-		if (cmpMap(((*i)->map)->map, (node->map)->map) && (*i)->cout <= node->cout)
-			return (true);
-	}
-	return (false);
-}
-
-/*int nbDoublon(Queue *list)
-{
-	int n = 0;
-
-	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
-	{
-		for (std::vector<Node*>::iterator j = i + 1; j != list->end(); ++j)
-		{
-			if (((*j)->map)->mapString != NULL && ((*i)->map)->mapString != NULL &&
-			memcmp(((*j)->map)->mapString, ((*i)->map)->mapString, ((*i)->map)->nMax) == 0)
-			{
-				((*j)->map)->mapString = NULL;
-				n++;
-			}
-		}
-	}
-	return n;
-}*/
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 {
@@ -267,7 +121,7 @@ Map getMap(std::vector<std::string> &file)/*leaks*/
 
 void errorFormat()
 {
-	std::cout << "[error] File format" << std::endl;
+	std::cout << "[error] Map format" << std::endl;
 	exit(1);
 }
 

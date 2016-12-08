@@ -13,6 +13,7 @@
 #include "Map.hpp"
 #include "Node.hpp"
 #include "isSolvable.hpp"
+#include "solve.hpp"
 
 class Map;
 class Node;
@@ -26,7 +27,18 @@ class mycomparison
 		}
 };
 
+// class CompUniformCost
+// {
+// 	public:
+// 		bool operator() (const Node *lhs, const Node *rhs) const
+// 		{
+// 			return (lhs->heuristic < rhs->heuristic);
+// 		}
+// };
+
 typedef std::priority_queue<Node *, std::vector<Node *>, mycomparison> pq;
+// typedef std::priority_queue<Node *, std::vector<Node *>, bool(*)(Node *lhs, Node *rhs)> pq;
+
 
 class Queue : public pq
 {
@@ -44,14 +56,6 @@ class Queue : public pq
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
 Map getMap(std::vector<std::string> &file);
 void errorFormat();
-void aStar(Map &start);
-Node *findNode(Queue *list, Node *find);
-
-//int nbDoublon(Queue *lst);
-bool isExistAndBetter(Queue *list, Node *node);
 void initStatics(int mapSize);
-bool cmpMap(int **map1, int **map2);
-int getNeighbors(Queue *close, Queue *open, Node *cur, Node **neighbors);
-void getCoordCase(int &x, int &y, int **mapToFind, int find);
 
 #endif

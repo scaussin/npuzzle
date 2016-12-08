@@ -1,12 +1,8 @@
-#cout: 18 open: 9297 close: 13783
-#./npuzzle map3  4.22s user 0.01s system 99% cpu 4.263 total
-
-#cout: 18 open: 172 close: 619
-#./npuzzle map3  0,01s user 0,00s system 77% cpu 0,010 total
-
 #cout: 18 open: 172 close: 210
 #./npuzzle map3  0,00s user 0,00s system 61% cpu 0,006 total
-#nbDoublon open: 10 close: 0
+
+#found ! cout: 18 open: 178 close: 224
+#./npuzzle map3  0.00s user 0.00s system 73% cpu 0.004 total
 
 # This puzzle is solvable
 3
