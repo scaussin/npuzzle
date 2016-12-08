@@ -40,23 +40,23 @@ int	main(int ac, char **av)
 			std::cout << "r:" <<optarg << std::endl;
 				mapMode += 'r';
 				if (!optarg)
-					writeUsage();
+					PrintUsage();
 				sizeMapRand = atoi(optarg);
 				break;
 			case 'f':
 			std::cout << "f:" <<optarg << std::endl;
 				mapMode += 'f';
 				if (!optarg)
-					writeUsage();
+					PrintUsage();
 				fileName = optarg;
 				break;
 			default: 
-				writeUsage();
+				PrintUsage();
 		}
 	}
 	if (algo == 0 || (heur1 == 0 && heur2 == 0 && heur3 == 0) || (algo != 'a' && algo != 'g' && algo != 'u' )|| 
 		(heur1 != 1 && heur2 != 2 && heur3 != 3) || mapMode == 0 || (mapMode != 'r' && mapMode != 'f'))
-		writeUsage();
+		PrintUsage();
 	
 	if (mapMode == 'f')
 	{
@@ -82,11 +82,12 @@ int	main(int ac, char **av)
 			return (1);
 		}
 		mapStart = getMapRand(sizeMapRand);
-		initStatics(mapSize);
+		initStatics(sizeMapRand);
+		mapStart->print();
 	}
 	else
 		return (1);
-	if (!isSolvable(mapStart))
+	if (!isSolvable(*mapStart))
 	{
 		std::cout << "Map unsolvable" << std::endl;
 	}
@@ -95,7 +96,7 @@ int	main(int ac, char **av)
 	return (0);
 }
 
-void writeUsage()
+void PrintUsage()
 {
 	std::cout << "Usage: ./npuzzle -[<algorithm>] -[<heuristics>] [-f <file_name> | -r <size_random_puzzle>]" << std::endl;
 	std::cout << "Usage: ./npuzzle -[ a | g | u ] -[123] [-f <file_name> | -r <size_random_puzzle>]" << std::endl;
@@ -138,7 +139,12 @@ Map *getMapRand(int mapSize)
 {
 	int **map;
 	srand (time(NULL));
+	int *table = NULL;
+	table = new int[mapSize * mapSize];
 
+	if (!table)
+		exit(1);
+	bzero(table, mapSize * mapSize);
 	map = new int*[mapSize];
 	for (int i = 0; i < mapSize; i++)
 	{
@@ -146,10 +152,28 @@ Map *getMapRand(int mapSize)
 		int j = 0;
 		while (j < mapSize)
 		{
-			map[i][j] = rand() % (mapSize * mapSize) - i + j;
+			int r = 0;
+			while (table[(r = rand() % (mapSize * mapSize))] == 1)
+				;
+			table[r] = 1;
+			map[i][j] = r;
 			j++;
 		}
 	}
+
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int j = 0; j < mapSize; j++)
+		{
+			
+				std::cout  << map[i][j] << " ";
+
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	delete[] table;
 	initStatics(mapSize);
 	return (new Map(map));
 }

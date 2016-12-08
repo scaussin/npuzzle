@@ -112,70 +112,30 @@ int Map::getManhattanDistance()
 	return (ManhattanDistance);
 }
 
-
-/*
-Node **Map::getNeighbors(int &nNeighbors, Node *parentNode)
-{
-	int x, y;
-	nNeighbors = 0;
-	Node **neighbors = new Node*[4];
-
-	getCoordCase(x, y, map, 0);
-	if (y > 0)
-	{
-
-		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
-		neighbors[nNeighbors]->map->moveUp(x, y);
-		nNeighbors++;
-	}
-	if (y < mapSize - 1)
-	{
-		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
-		neighbors[nNeighbors]->map->moveDown(x, y);
-		nNeighbors++;
-	}
-	if (x > 0)
-	{
-		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
-		neighbors[nNeighbors]->map->moveLeft(x, y);
-		nNeighbors++;
-	}
-	if (x < mapSize - 1)
-	{
-		neighbors[nNeighbors] = new Node(new Map(*this), parentNode);
-		neighbors[nNeighbors]->map->moveRight(x, y);
-		nNeighbors++;
-	}
-	return (neighbors);
-}
-*/
 void Map::moveUp(int x, int y)
 {
 	map[y][x] = map[y - 1][x];
 	map[y - 1][x] = 0;
-	//initMapString();
 }
 
 void Map::moveDown(int x, int y)
 {
 	map[y][x] = map[y + 1][x];
 	map[y + 1][x] = 0;
-	//initMapString();
 }
 
 void Map::moveLeft(int x, int y)
 {
 	map[y][x] = map[y][x - 1];
 	map[y][x - 1] = 0;
-	//initMapString();
 }
 
 void Map::moveRight(int x, int y)
 {
 	map[y][x] = map[y][x + 1];
 	map[y][x + 1] = 0;
-	//initMapString();
 }
+
 /*
 void Map::initMapString()
 {
@@ -218,14 +178,25 @@ bool Map::isMapSolved()
 
 void Map::print()
 {
+	std::string space = "";
 	for (int i = 0; i < mapSize; i++)
 	{
 		for (int j = 0; j < mapSize; j++)
 		{
-			if (mapSize > 3) 
-				std::cout << (map[i][j] < 10 ? " " : "") << map[i][j] << " ";
-			else
-				std::cout << map[i][j] << " ";
+			space.assign("");
+			if (nMax > 9)
+			{	
+				//int c = map[i][j];
+				int a = (int)floor(log10(nMax));
+				int b = (int)floor(log10(map[i][j] == 0 ? 1 :map[i][j]));
+				//std::cout << c << " " << a << " "<< b << " " << "=" <<a - b << std::endl;
+				if ((a - b) >= 1)
+					space.assign(" ",a - b);
+			}
+			//if (mapSize > 3)
+				std::cout << space << map[i][j] << " ";
+			/*else
+				std::cout << map[i][j] << " ";*/
 		}
 		std::cout << std::endl;
 	}

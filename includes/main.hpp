@@ -49,7 +49,7 @@ void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
 Map *getMap(std::vector<std::string> &file);
 void errorFormat();
 void initStatics(int mapSize);
-void writeUsage();
+void PrintUsage();
 Map *getMapRand(int mapSize);
 
 #endif

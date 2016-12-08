@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <math.h>
 
 #include "Node.hpp"
 
@@ -26,7 +27,6 @@ class Map {
 		void moveDown(int x, int y);
 		void moveLeft(int x, int y);
 		void moveRight(int x, int y);
-		
 
 		int **map;
 		static int mapSize;
