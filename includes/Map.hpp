@@ -18,23 +18,20 @@ class Map {
 		~Map();
 
 		int getManhattanDistance();
-		//void getCoordCase(int &x, int &y, int **mapToFind, int find);
-		//Node **getNeighbors(int &nNeighbors, Node *prevNode);
+		int misplaced();
+		int outRowCol();
 		bool isMapSolved();
 		void print();
 		void moveUp(int x, int y);
 		void moveDown(int x, int y);
 		void moveLeft(int x, int y);
 		void moveRight(int x, int y);
-		//void initMapString();
 		
 
 		int **map;
-		//char *mapString;
 		static int mapSize;
 		static int nMax;
 		static int **mapSolved;
-		//static char *mapStringSolved;
 
 	private:
 		

@@ -9,6 +9,9 @@
 #include <cstring>
 #include <queue>
 #include <map>
+#include <unistd.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "Map.hpp"
 #include "Node.hpp"
@@ -27,18 +30,7 @@ class mycomparison
 		}
 };
 
-// class CompUniformCost
-// {
-// 	public:
-// 		bool operator() (const Node *lhs, const Node *rhs) const
-// 		{
-// 			return (lhs->heuristic < rhs->heuristic);
-// 		}
-// };
-
 typedef std::priority_queue<Node *, std::vector<Node *>, mycomparison> pq;
-// typedef std::priority_queue<Node *, std::vector<Node *>, bool(*)(Node *lhs, Node *rhs)> pq;
-
 
 class Queue : public pq
 {
@@ -54,8 +46,10 @@ class Queue : public pq
 };
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file);
-Map getMap(std::vector<std::string> &file);
+Map *getMap(std::vector<std::string> &file);
 void errorFormat();
 void initStatics(int mapSize);
+void writeUsage();
+Map *getMapRand(int mapSize);
 
 #endif

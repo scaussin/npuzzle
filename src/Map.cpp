@@ -60,15 +60,51 @@ Map::~Map()
 		delete mapString;*/
 }
 
-int Map::getManhattanDistance()
+int Map::misplaced()
 {
-	int ManhattanDistance = 0;
+	int nMisplaced = 0;
+	int x, y;
 
 	for (int i = 0; i < mapSize; i++)
 	{
 		for (int j = 0; j < mapSize; j++)
 		{
-			int x, y;
+			getCoordCase(x, y, mapSolved, map[i][j]);
+			if (j != x || i != y)
+				nMisplaced++;
+		}
+	}
+	return (nMisplaced);
+}
+
+int Map::outRowCol()
+{
+	int nOut = 0;
+	int x, y;
+
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int j = 0; j < mapSize; j++)
+		{
+			getCoordCase(x, y, mapSolved, map[i][j]);
+			if (j != x)
+				nOut++;
+			if (i != y)
+				nOut++;
+		}
+	}
+	return (nOut);
+}
+
+int Map::getManhattanDistance()
+{
+	int ManhattanDistance = 0;
+	int x, y;
+
+	for (int i = 0; i < mapSize; i++)
+	{
+		for (int j = 0; j < mapSize; j++)
+		{		
 			getCoordCase(x, y, mapSolved, map[i][j]);
 			ManhattanDistance += abs(y - i) + abs(x - j);
 		}

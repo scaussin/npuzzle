@@ -42,7 +42,7 @@ void aStar(Map &start)
 	}
 }
 
-void uniformCost(Map &start)
+void uniformCost(Map *start)
 {
 	Queue open;
 	Queue close;
@@ -50,7 +50,7 @@ void uniformCost(Map &start)
 	int nNeighbors;
 	int i;
 
-	open.push(new Node(&start));
+	open.push(new Node(start));
 	while (!open.empty())
 	{
 		Node *cur = open.top();
@@ -67,7 +67,45 @@ void uniformCost(Map &start)
 			break ;
 		}
 		cur->cout += 1;
-		nNeighbors = getNeighbors(&close, &open, cur, neighbors, &isExist);
+		nNeighbors = getNeighbors(&close, &open, cur, neighbors, &isExistAndBetter);
+		cur->cout -= 1;
+		i = 0;
+		while(i < nNeighbors)
+		{
+			neighbors[i]->heuristic = neighbors[i]->cout;
+			open.push(neighbors[i]);
+			i++;
+		}
+		close.push(cur);
+	}
+}
+
+void greedy(Map *start)
+{
+	Queue open;
+	Queue close;
+	Node **neighbors = new Node*[4];
+	int nNeighbors;
+	int i;
+
+	open.push(new Node(start));
+	while (!open.empty())
+	{
+		Node *cur = open.top();
+		open.pop();
+		if (cur->map->isMapSolved())
+		{
+			std::cout << "found ! cout: " << cur->cout << " open: " << open.size() << " close: " << close.size() << std::endl;
+			/*Node *tmp = cur;
+			while (tmp)
+			{
+				tmp->map->print();
+				tmp = tmp->parentNode;
+			}*/
+			break ;
+		}
+		cur->cout += 1;
+		nNeighbors = getNeighbors(&close, &open, cur, neighbors, &isExistAndBetter);
 		cur->cout -= 1;
 		i = 0;
 		while(i < nNeighbors)
@@ -79,11 +117,6 @@ void uniformCost(Map &start)
 		close.push(cur);
 	}
 }
-/*
-bool cmpUniforCost(Node *lhs, Node *rhs)
-{
-	return (lhs->heuristic < rhs->heuristic);
-}*/
 
 void getCoordCase(int &x, int &y, int **mapToFind, int find)
 {

@@ -4,37 +4,63 @@ int	main(int ac, char **av)
 {
 	std::ifstream fileStream;
 	std::vector<std::string> file;
-
-	if (ac == 2)
+	Map *mapStart;
+	int opt;
+	char algo = 0;
+	char heur1 = 0;
+	char heur2 = 0;
+	char heur3 = 0;
+	char mapMode = 0;
+	char *fileName = NULL;
+	int sizeMapRand = 0;
+	
+	while ((opt = getopt(ac, av, "agu123r:f:")) != -1) 
 	{
-/*
-		int flags, opt;
-		int nsecs, tfnd;
-		nsecs = 0;
-		tfnd = 0;
-		flags = 0;
-
-		while ((opt = getopt(argc, argv, "nt:")) != -1) 
+		switch (opt) 
 		{
-			switch (opt) 
-			{
-				case 'n':
-					flags = 1;
-					break;
-				case 't':
-					nsecs = atoi(optarg);
-					tfnd = 1;
-					break;
-				default: 
-					fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n",
-					argv[0]);
-					exit(EXIT_FAILURE);
-			}
+			case 'a':
+				algo += 'a';
+				break;
+			case 'g':
+				algo += 'g';
+				break;
+			case 'u':
+				algo += 'u';
+				break;
+			case '1':
+				heur1 += 1;
+				break;
+			case '2':
+				heur2 += 2;
+				break;
+			case '3':
+				heur3 += 3;
+				break;
+			case 'r':
+			std::cout << "r:" <<optarg << std::endl;
+				mapMode += 'r';
+				if (!optarg)
+					writeUsage();
+				sizeMapRand = atoi(optarg);
+				break;
+			case 'f':
+			std::cout << "f:" <<optarg << std::endl;
+				mapMode += 'f';
+				if (!optarg)
+					writeUsage();
+				fileName = optarg;
+				break;
+			default: 
+				writeUsage();
 		}
-
-		printf("flags=%d; tfnd=%d; optind=%d\n", flags, tfnd, optind);
-*/
-		fileStream.open(av[1]);
+	}
+	if (algo == 0 || (heur1 == 0 && heur2 == 0 && heur3 == 0) || (algo != 'a' && algo != 'g' && algo != 'u' )|| 
+		(heur1 != 1 && heur2 != 2 && heur3 != 3) || mapMode == 0 || (mapMode != 'r' && mapMode != 'f'))
+		writeUsage();
+	
+	if (mapMode == 'f')
+	{
+		fileStream.open(fileName);
 		if (fileStream.is_open())
 		{
 			readFile(fileStream, file);
@@ -45,21 +71,48 @@ int	main(int ac, char **av)
 			std::cout << "[error] open file" << std::endl;
 			return (1);
 		}
-		Map mapStart = getMap(file);
+		mapStart = getMap(file);
 		std::cout << std::endl;
-		if (!isSolvable(mapStart))
+	}
+	else if (mapMode == 'r')
+	{
+		if (sizeMapRand < 3 || sizeMapRand > 100)
 		{
-			std::cout << "Map unsolvable" << std::endl;
+			std::cout << "size map out of range (3 <= size <= 100)" << std::endl;
 			return (1);
 		}
-		//mapStart.initMapString();
-		uniformCost(mapStart);
+		mapStart = getMapRand(sizeMapRand);
+		initStatics(mapSize);
 	}
-	else if (ac == 1)
-		std::cout << "TODO random" << std::endl;
 	else
-		std::cout << "usage: ./npuzzle [file_puzzle]" << std::endl;
+		return (1);
+	if (!isSolvable(mapStart))
+	{
+		std::cout << "Map unsolvable" << std::endl;
+	}
+	delete mapStart;
+
 	return (0);
+}
+
+void writeUsage()
+{
+	std::cout << "Usage: ./npuzzle -[<algorithm>] -[<heuristics>] [-f <file_name> | -r <size_random_puzzle>]" << std::endl;
+	std::cout << "Usage: ./npuzzle -[ a | g | u ] -[123] [-f <file_name> | -r <size_random_puzzle>]" << std::endl;
+		std::cout << "\t<algorithm> :" << std::endl;
+			std::cout << "\t\ta -> A*" << std::endl;
+			std::cout << "\t\tg -> greedy searches (without heuristic)" << std::endl;
+			std::cout << "\t\tu -> uniform cost (Dijkstra)" << std::endl;
+		std::cout << "\t<heuristics> :" << std::endl;
+			std::cout << "\t\t1 -> Manhattan Distance" << std::endl;
+			std::cout << "\t\t2 -> Tiles out of row and column" << std::endl;
+			std::cout << "\t\t3 -> Misplaced Tiles" << std::endl << std::endl;
+		std::cout << "\texample :" << std::endl;
+			std::cout << "\t\t./npuzzle -a -1 -f file_name" << std::endl;
+			std::cout << "\t\t./npuzzle -a -23 -r 3" << std::endl;
+			std::cout << "\t\t./npuzzle -u -123 -r 4" << std::endl;
+			std::cout << "\t\t./npuzzle -g -f file_name" << std::endl;
+	exit(1);
 }
 
 void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
@@ -81,7 +134,27 @@ void readFile(std::ifstream &fileStream, std::vector<std::string> &file)
 	}
 }
 
-Map getMap(std::vector<std::string> &file)/*leaks*/
+Map *getMapRand(int mapSize)
+{
+	int **map;
+	srand (time(NULL));
+
+	map = new int*[mapSize];
+	for (int i = 0; i < mapSize; i++)
+	{
+		map[i] = new int[mapSize];
+		int j = 0;
+		while (j < mapSize)
+		{
+			map[i][j] = rand() % (mapSize * mapSize) - i + j;
+			j++;
+		}
+	}
+	initStatics(mapSize);
+	return (new Map(map));
+}
+
+Map *getMap(std::vector<std::string> &file)/*leaks*/
 {
 	int mapSize;
 	int **map;
@@ -116,7 +189,7 @@ Map getMap(std::vector<std::string> &file)/*leaks*/
 			errorFormat();
 	}
 	initStatics(mapSize);
-	return (Map(map));
+	return (new Map(map));
 }
 
 void errorFormat()
