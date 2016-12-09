@@ -52,8 +52,8 @@ int	main(int ac, char **av)
 				PrintUsage();
 		}
 	}
-	if (algo == 0 || (heur1 == 0 && heur2 == 0 && heur3 == 0) || (algo != 'a' && algo != 'g' && algo != 'u' )|| 
-		(heur1 != 1 && heur2 != 2 && heur3 != 3) || mapMode == 0 || (mapMode != 'r' && mapMode != 'f') || (heur1 != 0 && heur1 != 1)
+	if (algo == 0 || (heur1 == 0 && heur2 == 0 && heur3 == 0 && algo != 'u') || (algo != 'a' && algo != 'g' && algo != 'u' )|| 
+		mapMode == 0 || (mapMode != 'r' && mapMode != 'f') || (heur1 != 0 && heur1 != 1)
 		|| (heur2 != 0 && heur2 != 2) || (heur3 != 0 && heur3 != 3))
 		PrintUsage();
 	
@@ -81,7 +81,6 @@ int	main(int ac, char **av)
 			return (1);
 		}
 		mapStart = getMapRand(sizeMapRand);
-		initStatics(sizeMapRand);
 		mapStart->print();
 		std::cout << "---------------------" << std::endl;
 	}
@@ -150,26 +149,37 @@ Map *getMapRand(int mapSize)
 {
 	int **map;
 	srand (time(NULL));
-	int *table = NULL;
-	table = new int[mapSize * mapSize];
+	int *table = new int[mapSize * mapSize];
+	int j;
+	int r;
 
-	memset(table, 0, mapSize * mapSize);
+	int i = 0;
+	while (i < mapSize * mapSize)
+	{
+		table[i] = 0;
+		i++;
+	}
 	map = new int*[mapSize];
 	for (int i = 0; i < mapSize; i++)
 	{
 		map[i] = new int[mapSize];
-		int j = 0;
+		j = 0;
 		while (j < mapSize)
 		{
-			int r = 0;
-			while (table[(r = rand() % (mapSize * mapSize))] == 1)
-				{}
+			r = 0;
+			while (1)
+			{
+				r = rand() % (mapSize * mapSize);
+				if (table[r] == 0)
+					break;
+			}
 			table[r] = 1;
 			map[i][j] = r;
 			j++;
 		}
+	
 	}
-	// d table
+	delete[] table;
 	initStatics(mapSize);
 	return (new Map(map));
 }
@@ -202,9 +212,9 @@ Map *getMap(std::vector<std::string> &file)
 			token = strtok(NULL, "\t ");
 			j++;
 		}
-		free(tmp);
 		if (j != mapSize || token != NULL)
 			errorFormat();
+		free(tmp);
 	}
 	for (int i = 0; i < mapSize * mapSize ; i++)
 	{
@@ -212,7 +222,7 @@ Map *getMap(std::vector<std::string> &file)
 			errorFormat();
 	}
 
-	delete [] check;
+	delete[] check;
 	initStatics(mapSize);
 	return (new Map(map));
 }
@@ -230,7 +240,7 @@ void initStatics(int _mapSize)
 	int margin = 0, i = 0, j = 0, k = 0;
 	Map::mapSolved = new int*[Map::mapSize];
 
-	for (int i = 0; i < Map::nMax; i++)
+	for (int i = 0; i < Map::mapSize; i++)
 		Map::mapSolved[i] = new int[Map::mapSize];
 	while (42)
 	{

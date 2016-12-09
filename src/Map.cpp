@@ -3,7 +3,6 @@
 int **Map::mapSolved = NULL;
 int Map::nMax = 0;
 int Map::mapSize = 0;
-//char *Map::mapStringSolved = NULL;
 
 Map::Map(int **_map) : map(_map)
 {
@@ -31,7 +30,6 @@ bool Map::operator==(Map const& rhs)
 		i++;
 	}
 	return (true);
-	//return(memcmp(mapString, rhs.mapString, nMax) == 0);
 }
 
 Map &Map::operator=(Map const &rhs)

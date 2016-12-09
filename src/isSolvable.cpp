@@ -36,6 +36,8 @@ int *mapLineSnailChr(int *mapLineSnail, int nMax, int find)
 		if (mapLineSnail[i] == find)
 			 return (&(mapLineSnail[i]));
 	}
+	std::cout << "unsolvable" << std::endl;
+	exit (1);
 	return (NULL);
 }
 
