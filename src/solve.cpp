@@ -1,6 +1,6 @@
 #include "solve.hpp"
 
-void aStar(Map &start)
+void aStar(Map *start, int heur1, int heur2, int heur3)
 {
 	Queue open;
 	Queue close;
@@ -8,38 +8,43 @@ void aStar(Map &start)
 	int nNeighbors;
 	int i;
 
-	open.push(new Node(&start));
+	open.push(new Node(start));
 	while (!open.empty())
 	{
 		Node *cur = open.top();
 		open.pop();
 		if (cur->map->isMapSolved())
 		{
-			std::cout << "found ! cout: " << cur->cout << " open: " << open.size() << " close: " << close.size() << std::endl;
-			/*Node *tmp = cur;
+			Node *tmp = cur;
 			while (tmp)
 			{
 				tmp->map->print();
 				tmp = tmp->parentNode;
-			}*/
+			}
+			std::cout << "moves: " << cur->cout << std::endl;
+			std::cout << "complexity in time: " << open.size() << std::endl;
+			std::cout << "complexity in size: " << close.size() + open.size() << std::endl;
 			break ;
 		}
 		cur->cout += 1;
 		nNeighbors = getNeighbors(&close, &open, cur, neighbors, &isExistAndBetter);
 		cur->cout -= 1;
-		/*if(close.size() % 500 == 0)
-		{
-			std::cout << open.size() << "\t" <<close.size() << std::endl;
-		}*/
 		i = 0;
 		while(i < nNeighbors)
 		{
-			neighbors[i]->heuristic = neighbors[i]->cout + neighbors[i]->map->getManhattanDistance();
+			neighbors[i]->heuristic = neighbors[i]->cout;
+			if (heur1 == 1)
+				neighbors[i]->heuristic += neighbors[i]->map->getManhattanDistance();
+			if (heur2 == 2)
+				neighbors[i]->heuristic += neighbors[i]->map->outRowCol();
+			if (heur3 == 3)
+				neighbors[i]->heuristic += neighbors[i]->map->misplaced();
 			open.push(neighbors[i]);
 			i++;
 		}
 		close.push(cur);
 	}
+	delete[] neighbors;
 }
 
 void uniformCost(Map *start)
@@ -57,13 +62,15 @@ void uniformCost(Map *start)
 		open.pop();
 		if (cur->map->isMapSolved())
 		{
-			std::cout << "found ! cout: " << cur->cout << " open: " << open.size() << " close: " << close.size() << std::endl;
-			/*Node *tmp = cur;
+			Node *tmp = cur;
 			while (tmp)
 			{
 				tmp->map->print();
 				tmp = tmp->parentNode;
-			}*/
+			}
+			std::cout << "moves: " << cur->cout << std::endl;
+			std::cout << "complexity in time: " << open.size() << std::endl;
+			std::cout << "complexity in size: " << close.size() + open.size() << std::endl;
 			break ;
 		}
 		cur->cout += 1;
@@ -80,7 +87,7 @@ void uniformCost(Map *start)
 	}
 }
 
-void greedy(Map *start)
+void greedy(Map *start, int heur1, int heur2, int heur3)
 {
 	Queue open;
 	Queue close;
@@ -95,13 +102,15 @@ void greedy(Map *start)
 		open.pop();
 		if (cur->map->isMapSolved())
 		{
-			std::cout << "found ! cout: " << cur->cout << " open: " << open.size() << " close: " << close.size() << std::endl;
-			/*Node *tmp = cur;
+			Node *tmp = cur;
 			while (tmp)
 			{
 				tmp->map->print();
 				tmp = tmp->parentNode;
-			}*/
+			}
+			std::cout << "moves: " << cur->cout << std::endl;
+			std::cout << "complexity in time: " << open.size() << std::endl;
+			std::cout << "complexity in size: " << close.size() + open.size() << std::endl;
 			break ;
 		}
 		cur->cout += 1;
@@ -110,6 +119,13 @@ void greedy(Map *start)
 		i = 0;
 		while(i < nNeighbors)
 		{
+			if (heur1 == 1)
+				neighbors[i]->heuristic += neighbors[i]->map->getManhattanDistance();
+			if (heur2 == 2)
+				neighbors[i]->heuristic += neighbors[i]->map->outRowCol();
+			if (heur3 == 3)
+				neighbors[i]->heuristic += neighbors[i]->map->misplaced();
+
 			neighbors[i]->heuristic = neighbors[i]->map->getManhattanDistance();
 			open.push(neighbors[i]);
 			i++;
@@ -201,16 +217,6 @@ bool cmpMap(int **map1, int **map2)
 		i++;
 	}
 	return (true);
-}
-
-bool isExist(Queue *list, Node *node)
-{
-	for (std::vector<Node*>::iterator i = list->begin(); i != list->end(); ++i)
-	{
-		if (cmpMap(((*i)->map)->map, (node->map)->map) && (*i)->heuristic <= node->heuristic)
-			return (true);
-	}
-	return (false);
 }
 
 bool isExistAndBetter(Queue *list, Node *node)

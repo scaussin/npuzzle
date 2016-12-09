@@ -183,20 +183,13 @@ void Map::print()
 	{
 		for (int j = 0; j < mapSize; j++)
 		{
-			space.assign("");
 			if (nMax > 9)
 			{	
-				//int c = map[i][j];
 				int a = (int)floor(log10(nMax));
 				int b = (int)floor(log10(map[i][j] == 0 ? 1 :map[i][j]));
-				//std::cout << c << " " << a << " "<< b << " " << "=" <<a - b << std::endl;
-				if ((a - b) >= 1)
-					space.assign(" ",a - b);
+				space.assign(a - b, ' ');
 			}
-			//if (mapSize > 3)
 				std::cout << space << map[i][j] << " ";
-			/*else
-				std::cout << map[i][j] << " ";*/
 		}
 		std::cout << std::endl;
 	}
