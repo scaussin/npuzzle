@@ -13,7 +13,7 @@ map:
 1 8 0
 7 6 5
 ```
-solving:
+solving step by step:
 ```
 ./npuzzle map
 solvable in 5 moves:
